@@ -26,7 +26,7 @@ public class TeleOpSurface extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         mainClaw.init(hardwareMap);
-        boolean clawState = false; //open
+        boolean clawState = false; //closed
 
         // Put initialization blocks here.
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -40,17 +40,15 @@ public class TeleOpSurface extends LinearOpMode {
                 frontLeft.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x + gamepad1.right_stick_x)) / 2);
                 backRight.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 2);
                 frontRight.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x) / 2);
-                if (gamepad1.right_bumper)
-                {
-                    if (clawState == false)
-                    {
+                if (gamepad1.right_bumper) {
+                    if (clawState == true) {
                         mainClaw.closeServo();
-                        clawState = true;
-                    }
-                    if (clawState == true)
-                    {
-                        mainClaw.openServo();
                         clawState = false;
+
+                        if (clawState == false) {
+                            mainClaw.openServo();
+                            clawState = true;
+                        }
                     }
                 }
             }
