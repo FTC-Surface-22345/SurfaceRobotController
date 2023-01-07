@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Elevator{
     DcMotorEx leftElevator;
     DcMotorEx rightElevator;
-    //double setPosition;
+    double setPosition;
     double retractedPosition = 0;
     double targetPosition;
     double currentPosition;
