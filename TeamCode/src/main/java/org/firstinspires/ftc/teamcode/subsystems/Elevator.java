@@ -11,12 +11,34 @@ public class Elevator{
     DcMotorEx leftElevator;
     DcMotorEx rightElevator;
     double setPosition;
-    double updatePosition;
+    double retractedPosition = 0;
+    double targetPosition;
+    double currentPosition;
+    double error;
+    double gain = 0.01;
+    double newMotorPower;
 
-    public void init(HardwareMap hardwareMap){
+    public void init(HardwareMap hardwareMap) {
         leftElevator = hardwareMap.get(DcMotorEx.class, "Left Elevator");
         rightElevator = hardwareMap.get(DcMotorEx.class, "Right Elevator");
     }
+
+    //target - current = error
+    //error * gain (0.01) = newMotorPosition
+
+    public void updateElevator() {
+        currentPosition = leftElevator.getCurrentPosition();
+        error = targetPosition - currentPosition;
+        newMotorPower = error * gain;
+
+        leftElevator.setPower(newMotorPower);
+        rightElevator.setPower(newMotorPower);
+    }
+
+    public void setTargetPosition(double tempPosition){
+        targetPosition = tempPosition;
+    }
+
 
 
 
