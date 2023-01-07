@@ -51,16 +51,16 @@ public class TeleOpSurface extends LinearOpMode {
                         mainClaw.openServo();
                         telemetry.addData("Claw State: ", "Open");
                         telemetry.update();
+                        sleep(250);
                         clawState = true;
-                        break;
                     }
 
                     if (clawState == true) {
                         mainClaw.closeServo();
                         telemetry.update();
                         telemetry.addData("Claw State: ", "Closed");
+                        sleep(250);
                         clawState = false;
-                        break;
                     }
 
 //                    while(gamepad1.right_bumper){
