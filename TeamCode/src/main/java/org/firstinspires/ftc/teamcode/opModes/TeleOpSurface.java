@@ -49,7 +49,7 @@ public class TeleOpSurface extends LinearOpMode {
                 if (gamepad1.right_bumper) {
                     if (clawState == false) {
                         mainClaw.openServo();
-                        telemetry.addLine("Claw Open");
+                        telemetry.addData("Claw: ", "Open");
                         telemetry.update();
                         sleep(200);
                         clawState = true;
@@ -58,7 +58,7 @@ public class TeleOpSurface extends LinearOpMode {
                     else if (clawState == true) {
                         mainClaw.closeServo();
                         telemetry.update();
-                        telemetry.addLine("Claw Closed");
+                        telemetry.addData("Claw: ", "Closed");
                         sleep(200);
                         clawState = false;
                     }

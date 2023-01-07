@@ -20,8 +20,8 @@ public class Claw{
     double closePositionRight = 0.8;
 
     public void init(HardwareMap hardwareMap){
-        leftServo = hardwareMap.get(Servo.class, "leftServo");
-        rightServo = hardwareMap.get(Servo.class, "rightServo");
+        leftServo = hardwareMap.get(Servo.class, "Left Claw");
+        rightServo = hardwareMap.get(Servo.class, "Right Claw");
     }
 
     public void openServo(){
