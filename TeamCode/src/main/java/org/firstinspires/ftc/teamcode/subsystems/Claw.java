@@ -1,4 +1,6 @@
-//Ronald
+//Property of FTC Team 22345 - All External users must request permission to access and utilize code
+//Authors: Ronald Q. & Krish K.
+
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
