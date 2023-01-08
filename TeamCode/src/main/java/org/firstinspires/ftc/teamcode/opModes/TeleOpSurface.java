@@ -80,18 +80,21 @@ public class TeleOpSurface extends LinearOpMode {
                             telemetry.update();
                             elevatorLevel = 1;
                             sleep(250);
+                            break;
                         case 1:
                             elevator.setTargetPosition(200);
                             telemetry.addData("Elevator Position: ", "200");
                             telemetry.update();
                             elevatorLevel = 2;
                             sleep(250);
+                            break;
                         case 2:
                             elevator.setTargetPosition(400);
                             telemetry.addData("Elevator Position: ", "Fully Extended (400)");
                             telemetry.update();
                             elevatorLevel = 3;
                             sleep(250);
+                            break;
                     }
                 }
 
@@ -103,18 +106,21 @@ public class TeleOpSurface extends LinearOpMode {
                             telemetry.update();
                             elevatorLevel = 2;
                             sleep(250);
+                            break;
                         case 2:
                             elevator.setTargetPosition(100);
                             telemetry.addData("Elevator Position: ", "100");
                             telemetry.update();
                             elevatorLevel = 1;
                             sleep(250);
+                            break;
                         case 1:
                             elevator.setTargetPosition(0);
                             telemetry.addData("Elevator Position: ", "Retracted (0)");
                             telemetry.update();
                             elevatorLevel = 0;
                             sleep(250);
+                            break;
                     }
                 }
 
