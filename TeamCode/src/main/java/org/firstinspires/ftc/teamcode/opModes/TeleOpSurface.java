@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.Elevator;
 
 @TeleOp(name = "TeleOpSurface")
 public class TeleOpSurface extends LinearOpMode {
@@ -17,7 +18,10 @@ public class TeleOpSurface extends LinearOpMode {
     private DcMotor backLeft;
     private DcMotor backRight;
     private DcMotor frontRight;
-    private Claw mainClaw = new Claw();
+
+    private Claw claw = new Claw();
+
+    private Elevator elevator = new Elevator();
 
 
     @Override
@@ -33,8 +37,12 @@ public class TeleOpSurface extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
         //Claw Initialization
-        mainClaw.init(hardwareMap);
+        claw.init(hardwareMap);
         boolean clawState = false; //closed
+
+        //Elevator Initialization
+        elevator.init(hardwareMap);
+        int elevatorLevel = 0;
 
         waitForStart();
         if (opModeIsActive()) {
@@ -48,7 +56,7 @@ public class TeleOpSurface extends LinearOpMode {
                 frontRight.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x) / 2);
                 if (gamepad1.right_bumper) {
                     if (clawState == false) {
-                        mainClaw.openServo();
+                        claw.openServo();
                         telemetry.addData("Claw State: ", "Open");
                         telemetry.update();
                         sleep(250);
@@ -56,13 +64,58 @@ public class TeleOpSurface extends LinearOpMode {
                     }
 
                     if (clawState == true) {
-                        mainClaw.closeServo();
+                        claw.closeServo();
                         telemetry.update();
                         telemetry.addData("Claw State: ", "Closed");
                         sleep(250);
                         clawState = false;
                     }
+                }
 
+                if (gamepad1.right_trigger > 0.3){
+                    switch(elevatorLevel) {
+                        case 0:
+                            elevator.setTargetPosition(100);
+                            telemetry.addData("Elevator Position: ", "100");
+                            telemetry.update();
+                            elevatorLevel = 1;
+                            sleep(250);
+                        case 1:
+                            elevator.setTargetPosition(200);
+                            telemetry.addData("Elevator Position: ", "200");
+                            telemetry.update();
+                            elevatorLevel = 2;
+                            sleep(250);
+                        case 2:
+                            elevator.setTargetPosition(400);
+                            telemetry.addData("Elevator Position: ", "Fully Extended (400)");
+                            telemetry.update();
+                            elevatorLevel = 3;
+                            sleep(250);
+                    }
+                }
+
+                if (gamepad1.left_trigger > 0.3){
+                    switch(elevatorLevel) {
+                        case 3:
+                            elevator.setTargetPosition(200);
+                            telemetry.addData("Elevator Position: ", "200");
+                            telemetry.update();
+                            elevatorLevel = 2;
+                            sleep(250);
+                        case 2:
+                            elevator.setTargetPosition(100);
+                            telemetry.addData("Elevator Position: ", "100");
+                            telemetry.update();
+                            elevatorLevel = 1;
+                            sleep(250);
+                        case 1:
+                            elevator.setTargetPosition(0);
+                            telemetry.addData("Elevator Position: ", "Retracted (0)");
+                            telemetry.update();
+                            elevatorLevel = 0;
+                            sleep(250);
+                    }
                 }
 
             }
