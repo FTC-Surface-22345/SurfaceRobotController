@@ -21,8 +21,8 @@ public class Elevator{
     double newMotorPower;
 
     public void init(HardwareMap hardwareMap) {
-        leftElevator = hardwareMap.get(DcMotorEx.class, "Left Elevator");
-        rightElevator = hardwareMap.get(DcMotorEx.class, "Right Elevator");
+        leftElevator = hardwareMap.get(DcMotorEx.class, "LeftElevator");
+        rightElevator = hardwareMap.get(DcMotorEx.class, "RightElevator");
     }
 
     //target - current = error
@@ -39,6 +39,7 @@ public class Elevator{
 
     public void setTargetPosition(double tempPosition){
         targetPosition = tempPosition;
+        updateElevator();
     }
 
 
