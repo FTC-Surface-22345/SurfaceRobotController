@@ -8,10 +8,10 @@ Current Season: 2022-2023 Powerplay Season
 ### December 18, 2022
 * Created Repository forked from [FTC's Official Repository](https://github.com/FIRST-Tech-Challenge/FtcRobotController)
 
-###January 5, 2023
+### January 5, 2023
 * Edits to the *Elevator* and *Claw* creating classes for each and updating functionality to allow opening and closing of claw
 
-###January 6, 2023
+### January 6, 2023
 * A fix for the *Claw* class, adding a trigger to the claw using right shoulder button
 * Update to *TeleOpSurface* allowing control of the claw - Testing shows claw functions properly
 
