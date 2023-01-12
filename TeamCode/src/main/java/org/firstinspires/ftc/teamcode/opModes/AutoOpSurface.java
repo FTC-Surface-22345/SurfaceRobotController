@@ -13,10 +13,10 @@ import org.firstinspires.ftc.teamcode.subsystems.Claw;
 @Autonomous
 public class AutoOpSurface extends LinearOpMode{
 
-    private DcMotor frontLeft;
-    private DcMotor backLeft;
-    private DcMotor backRight;
-    private DcMotor frontRight;
+    private DcMotorEx frontLeft;
+    private DcMotorEx backLeft;
+    private DcMotorEx backRight;
+    private DcMotorEx frontRight;
 
     private Claw mainClaw = new Claw();
 
@@ -24,14 +24,14 @@ public class AutoOpSurface extends LinearOpMode{
     @Override
     public void runOpMode(){
         //Front Drive Motors Initialization
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
 
         //Back Drive Motors Initialization
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
+        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
 
         //Claw Initialization
         mainClaw.init(hardwareMap);

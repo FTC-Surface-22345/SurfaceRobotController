@@ -19,27 +19,48 @@ public class Elevator{
     double error;
     double gain = 0.01;
     double newMotorPower;
+    double leftPower;
+    double rightPower;
 
-    public void init(HardwareMap hardwareMap) {
+    public void init(HardwareMap hardwareMap) { //Complete
         leftElevator = hardwareMap.get(DcMotorEx.class, "LeftElevator");
         rightElevator = hardwareMap.get(DcMotorEx.class, "RightElevator");
+
+        leftElevator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rightElevator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        
+        leftElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);`
     }
 
-    //target - current = error
-    //error * gain (0.01) = newMotorPosition
 
-    public void updateElevator() {
-        currentPosition = leftElevator.getCurrentPosition();
-        error = targetPosition - currentPosition;
-        newMotorPower = error * gain;
+    public void setLiftPosition (double targetPos){
 
-        leftElevator.setPower(newMotorPower);
-        rightElevator.setPower(newMotorPower);
+        double currentPos = getPosition();
+
+        if (currentPos < targetPos) {
+            // Going up
+            leftPower = 1;
+            rightPower = -1;
+        } else if (currentPos > targetPos) {
+            // Going down
+            leftPower = -0.5;
+            rightPower = 0.5;
+        }
+
+        left.setTargetPosition((int) targetPos);
+        right.setTargetPosition((int) -targetPos);
+
+        left.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        right.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        left.setPower(leftPower);
+        right.setPower(rightPower);
+        
     }
 
-    public void setTargetPosition(double tempPosition){
-        targetPosition = tempPosition;
-        updateElevator();
+    public double getPosition(){
+        return leftElevator.getCurrentPosition();
     }
 
 
