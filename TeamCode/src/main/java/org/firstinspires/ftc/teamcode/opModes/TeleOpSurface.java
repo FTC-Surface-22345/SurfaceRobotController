@@ -74,12 +74,12 @@ public class TeleOpSurface extends LinearOpMode {
                 
                 if (gamepad1.dpad_down)
                 {
-
+                    
                 }
 
                 if (gamepad1.dpad_up)
                 {
-
+                    
                 }
 
                 if (gamepad1.dpad_right)
