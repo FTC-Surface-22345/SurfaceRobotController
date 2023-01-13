@@ -26,7 +26,7 @@ public class TeleOpSurface extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        //Front Drive Motors IInitialization
+        //Front Drive Motors Initialization
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
