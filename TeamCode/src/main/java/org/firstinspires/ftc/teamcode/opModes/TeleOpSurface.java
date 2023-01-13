@@ -48,6 +48,7 @@ public class TeleOpSurface extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
                 telemetry.addData("Robot Status", "Initialized");
+                telemetry.addData("Elevator Position: ", elevator.getPosition());
                 telemetry.update();
 
                 backLeft.setPower((gamepad1.left_stick_y + (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 2);
