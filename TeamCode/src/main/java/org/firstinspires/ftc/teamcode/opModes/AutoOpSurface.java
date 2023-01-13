@@ -7,18 +7,19 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 
 @Autonomous
 public class AutoOpSurface extends LinearOpMode{
 
-    private DcMotorEx frontLeft;
-    private DcMotorEx backLeft;
-    private DcMotorEx backRight;
-    private DcMotorEx frontRight;
+    DcMotorEx frontLeft;
+    DcMotorEx backLeft;
+    DcMotorEx backRight;
+    DcMotorEx frontRight;
 
-    private Claw mainClaw = new Claw();
+    Claw mainClaw = new Claw();
 
 
     @Override
