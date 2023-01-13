@@ -14,14 +14,14 @@ import org.firstinspires.ftc.teamcode.subsystems.Elevator;
 @TeleOp(name = "TeleOpSurface")
 public class TeleOpSurface extends LinearOpMode {
 
-    private DcMotor frontLeft;
-    private DcMotor backLeft;
-    private DcMotor backRight;
-    private DcMotor frontRight;
+    DcMotor frontLeft;
+    DcMotor backLeft;
+    DcMotor backRight;
+    DcMotor frontRight;
 
-    private Claw claw = new Claw();
+    Claw claw = new Claw();
 
-    private Elevator elevator = new Elevator();
+    Elevator elevator = new Elevator();
 
 
     @Override
@@ -37,8 +37,8 @@ public class TeleOpSurface extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
         //Claw Initialization
-        //claw.init(hardwareMap);
-        //boolean clawState = false; //closed
+        claw.init(hardwareMap);
+        boolean clawState = true; //closed
 
         //Elevator Initialization
         elevator.init(hardwareMap);
@@ -55,23 +55,23 @@ public class TeleOpSurface extends LinearOpMode {
                 frontLeft.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x + gamepad1.right_stick_x)) / 2);
                 backRight.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 2);
                 frontRight.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x) / 2);
-                // if (gamepad1.right_bumper) {
-                //     if (clawState == false) {
-                //         claw.openServo();
-                //         telemetry.addData("Claw State: ", "Open");
-                //         telemetry.update();
-                //         sleep(250);
-                //         clawState = true;
-                //     }
+                 if (gamepad1.right_bumper) {
+                     if (!clawState) {
+                         claw.openServo();
+                         telemetry.addData("Claw State: ", "Open");
+                         telemetry.update();
+                         sleep(250);
+                         clawState = true;
+                     }
 
-                //     if (clawState == true) {
-                //         claw.closeServo();
-                //         telemetry.update();
-                //         telemetry.addData("Claw State: ", "Closed");
-                //         sleep(250);
-                //         clawState = false;
-                //     }
-                // }
+                     if (clawState) {
+                         claw.closeServo();
+                         telemetry.update();
+                         telemetry.addData("Claw State: ", "Closed");
+                         sleep(250);
+                         clawState = false;
+                     }
+                 }
 
                 if (gamepad1.dpad_up){
                     elevator.setLiftPosition(4440);
