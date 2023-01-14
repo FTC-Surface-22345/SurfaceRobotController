@@ -37,13 +37,16 @@ public class AutoOpSurface extends LinearOpMode{
     public void runOpMode(){
         //Front Drive Motors Initialization
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
+
 
         //Back Drive Motors Initialization
         backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
+
 
         //Claw Initialization
         mainClaw.init(hardwareMap);

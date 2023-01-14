@@ -27,11 +27,12 @@ public class Elevator{
 
     public void init(HardwareMap hardwareMap) { //Complete
         leftElevator = hardwareMap.get(DcMotorEx.class, "LeftElevator");
+        leftElevator.setDirection(DcMotorSimple.Direction.REVERSE);
         rightElevator = hardwareMap.get(DcMotorEx.class, "RightElevator");
+        rightElevator.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftElevator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rightElevator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        rightElevator.setDirection(DcMotorSimple.Direction.REVERSE);
         
         leftElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -44,12 +45,12 @@ public class Elevator{
 
         if (currentPos < targetPos) {
             // Going up
-            leftPower = 1;
-            rightPower = 1;
+            leftPower = -0.5;
+            rightPower = 0.5;
         } else if (currentPos > targetPos) {
             // Going down
             leftPower = 0.5;
-            rightPower = 0.5;
+            rightPower = -0.5;
         }
 
         leftElevator.setTargetPosition((int) targetPos);

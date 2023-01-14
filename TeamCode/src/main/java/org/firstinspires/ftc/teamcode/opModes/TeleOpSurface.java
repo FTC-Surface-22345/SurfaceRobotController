@@ -6,6 +6,7 @@ package org.firstinspires.ftc.teamcode.opModes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
@@ -27,14 +28,15 @@ public class TeleOpSurface extends LinearOpMode {
     @Override
     public void runOpMode() {
         //Front Drive Motors Initialization
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
 
         //Back Drive Motors Initialization
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
+        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
 
         //Claw Initialization
         claw.init(hardwareMap);
@@ -51,16 +53,16 @@ public class TeleOpSurface extends LinearOpMode {
                 telemetry.addData("Elevator Position: ", elevator.getPosition());
                 telemetry.update();
 
-                backLeft.setPower((gamepad1.left_stick_y + (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 2);
-                frontLeft.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x + gamepad1.right_stick_x)) / 2);
-                backRight.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 2);
-                frontRight.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x) / 2);
+                backLeft.setPower((gamepad1.right_stick_y + (gamepad1.right_stick_x - gamepad1.left_stick_x)) / 2);
+                frontLeft.setPower((gamepad1.right_stick_y - (gamepad1.right_stick_x + gamepad1.left_stick_x)) / 2);
+                backRight.setPower((gamepad1.right_stick_y- (gamepad1.right_stick_x - gamepad1.left_stick_x)) / 2);
+                frontRight.setPower((gamepad1.right_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x) / 2);
                  if (gamepad1.right_bumper) {
                      if (!clawState) {
                          claw.openServo();
                          telemetry.addData("Claw State: ", "Open");
                          telemetry.update();
-                         sleep(250);
+                         sleep(350);
                          clawState = true;
                      }
 
@@ -68,17 +70,17 @@ public class TeleOpSurface extends LinearOpMode {
                          claw.closeServo();
                          telemetry.update();
                          telemetry.addData("Claw State: ", "Closed");
-                         sleep(250);
+                         sleep(350);
                          clawState = false;
                      }
                  }
 
                 if (gamepad1.dpad_up){
-                    elevator.setLiftPosition(4440);
+                    elevator.setLiftPosition(4230);
                 }
                 
                 if (gamepad1.dpad_down){
-                    elevator.setLiftPosition(0);
+                    elevator.setLiftPosition(50);
                 }
 
             }
