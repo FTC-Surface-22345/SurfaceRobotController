@@ -79,7 +79,7 @@ public class TeleOpSurface extends LinearOpMode {
                  }
 
                 if (gamepad1.dpad_up){
-                    elevator.setLiftPosition(4230);
+                    elevator.setLiftPosition(4180);
                 }
                 
                 if (gamepad1.dpad_down){
