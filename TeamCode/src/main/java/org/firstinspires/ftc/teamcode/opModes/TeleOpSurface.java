@@ -15,10 +15,10 @@ import org.firstinspires.ftc.teamcode.subsystems.Elevator;
 @TeleOp(name = "TeleOpSurface")
 public class TeleOpSurface extends LinearOpMode {
 
-    DcMotor frontLeft;
-    DcMotor backLeft;
-    DcMotor backRight;
-    DcMotor frontRight;
+    DcMotorEx frontLeft;
+    DcMotorEx backLeft;
+    DcMotorEx backRight;
+    DcMotorEx frontRight;
 
     Claw claw = new Claw();
 
