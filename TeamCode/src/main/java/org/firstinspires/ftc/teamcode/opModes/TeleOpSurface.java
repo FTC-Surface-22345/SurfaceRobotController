@@ -62,21 +62,20 @@ public class TeleOpSurface extends LinearOpMode {
                 backRight.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 2);
                 frontRight.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x) / 2);
                  if (gamepad1.right_bumper) {
-                     if (!clawState) {
-                         claw.openServo();
-                         telemetry.addData("Claw State: ", "Open");
-                         telemetry.update();
-                         sleep(350);
-                         clawState = true;
-                     }
+                     claw.openServo();
+                     telemetry.addData("Claw State: ", "Open");
+                     telemetry.update();
+                     sleep(350);
+                     clawState = true;
 
-                     if (clawState) {
-                         claw.closeServo();
-                         telemetry.update();
-                         telemetry.addData("Claw State: ", "Closed");
-                         sleep(350);
-                         clawState = false;
-                     }
+                 }
+
+                 if(gamepad1.left_bumper) {
+                     claw.closeServo();
+                     telemetry.update();
+                     telemetry.addData("Claw State: ", "Closed");
+                     sleep(350);
+                     clawState = false;
                  }
 
                 if (gamepad1.dpad_up){
