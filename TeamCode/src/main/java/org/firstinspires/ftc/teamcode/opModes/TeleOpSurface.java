@@ -51,6 +51,7 @@ public class TeleOpSurface extends LinearOpMode {
             while (opModeIsActive()) {
                 telemetry.addData("Robot Status", "Initialized");
                 telemetry.addData("Elevator Position: ", elevator.getPosition());
+                telemetry.addData("Claw State: ", clawState);
                 telemetry.addData("Front Left: ", frontLeft.getCurrentPosition());
                 telemetry.addData("Front Right: ", frontRight.getCurrentPosition());
                 telemetry.addData("Back Left: ", backLeft.getCurrentPosition());
@@ -65,8 +66,8 @@ public class TeleOpSurface extends LinearOpMode {
                 //Close Claw
                  if (gamepad1.right_bumper) {
                      claw.openServo();
-                     telemetry.addData("Claw State: ", "Open");
-                     telemetry.update();
+//                     telemetry.addData("Claw State: ", "Open");
+//                     telemetry.update();
                      sleep(350);
                      clawState = true;
 
@@ -75,8 +76,8 @@ public class TeleOpSurface extends LinearOpMode {
                  //Open Claw
                  if(gamepad1.left_bumper) {
                      claw.closeServo();
-                     telemetry.update();
-                     telemetry.addData("Claw State: ", "Closed");
+//                     telemetry.addData("Claw State: ", "Closed");
+//                     telemetry.update();
                      sleep(350);
                      clawState = false;
                  }
