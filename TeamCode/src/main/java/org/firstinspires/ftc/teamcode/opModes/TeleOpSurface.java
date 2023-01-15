@@ -61,6 +61,8 @@ public class TeleOpSurface extends LinearOpMode {
                 frontLeft.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x + gamepad1.right_stick_x)) / 2);
                 backRight.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 2);
                 frontRight.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x) / 2);
+
+                //Close Claw
                  if (gamepad1.right_bumper) {
                      claw.openServo();
                      telemetry.addData("Claw State: ", "Open");
@@ -70,6 +72,7 @@ public class TeleOpSurface extends LinearOpMode {
 
                  }
 
+                 //Open Claw
                  if(gamepad1.left_bumper) {
                      claw.closeServo();
                      telemetry.update();
@@ -78,14 +81,17 @@ public class TeleOpSurface extends LinearOpMode {
                      clawState = false;
                  }
 
+                 //Elevator Fully Up
                 if (gamepad1.dpad_up){
                     elevator.setLiftPosition(4180);
                 }
-                
+
+                //Elevator Down
                 if (gamepad1.dpad_down){
                     elevator.setLiftPosition(50);
                 }
 
+                //Elevator Middle
                 if (gamepad1.dpad_left){
                     elevator.setLiftPosition(3110);
                 }
