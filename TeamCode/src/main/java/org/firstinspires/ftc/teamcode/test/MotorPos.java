@@ -73,9 +73,10 @@ public class MotorPos extends LinearOpMode{
         ((OpenCvWebcam) webcam).setMillisecondsPermissionTimeout(5000);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
             @Override
+
             public void onOpened(){
-                webcam.startStreaming(1280,720,OpenCvCameraRotation.UPRIGHT);
                 webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
+                webcam.startStreaming(1280,720,OpenCvCameraRotation.UPRIGHT);
             }
             @Override
             public void onError(int errorCode){
