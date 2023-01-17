@@ -39,12 +39,12 @@ public class MotorPos extends LinearOpMode{
         //Front Drive Motors Initialization
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
         frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        //frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
         frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        //frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
 
 
