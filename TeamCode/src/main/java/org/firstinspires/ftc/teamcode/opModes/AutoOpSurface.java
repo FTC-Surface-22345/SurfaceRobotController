@@ -81,7 +81,7 @@ public class AutoOpSurface extends LinearOpMode{
         waitForStart();
         while (opModeIsActive())
         {
-            telemetry.addData("avg", pipeline.getAnalysis());
+            telemetry.addData("avg", pipeline.getColorAverage());
 
             telemetry.update();
 
