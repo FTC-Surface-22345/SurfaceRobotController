@@ -1,20 +1,20 @@
-## TeamCode Module
+## TeamCode Module: FTC TEAM 22345 Surface
 
-Welcome!
+Welcome to FTC Team 22345's Public Repository for the FTC 2022-2023 Season Powerplay
 
-This module, TeamCode, is the place where you will write/paste the code for your team's
-robot controller App. This module is currently empty (a clean slate) but the
-process for adding OpModes is straightforward.
+## OpModes
 
-## Creating your own OpModes
+1. TeleOpSurface - the TeleOpMode for driver control. 
+    TeleOp includes 4-wheel drivetrain control, 2 lift control, and claw mount control
 
-The easiest way to create your own OpMode is to copy a Sample OpMode and make it your own.
-
-Sample opmodes exist in the FtcRobotController module.
-To locate these samples, find the FtcRobotController module in the "Project/Android" tab.
-
-Expand the following tree elements:
- FtcRobotController/java/org.firstinspires.ftc.robotcontroller/external/samples
+2. AutoOpSurface -  the base code for the autonomous control we have for each of the positions. 
+    1. AutoOpBlue1 - 
+    2. AutoOpBlue2 - 
+    3. AutoOpBlue3 - 
+    4. AutoOpBlue4 - 
+3. LiftLmits (package: test) - a TeleOpMode for calculating the lift limits and positions to score cones using 
+   specified positions
+4. MotorPos (package: test) - A TeleOpMode for calculating the motor positions for each Autonomous Phase and Position
 
 ### Naming of Samples
 
