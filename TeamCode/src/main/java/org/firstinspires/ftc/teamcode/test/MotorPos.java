@@ -5,8 +5,10 @@ package org.firstinspires.ftc.teamcode.test;
 
 import android.annotation.SuppressLint;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -16,7 +18,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.utility.OpenCV;
 import org.openftc.easyopencv.*;
 
-@Autonomous
+@TeleOp(name = "MotorPos")
 public class MotorPos extends LinearOpMode{
 
 
@@ -36,6 +38,7 @@ public class MotorPos extends LinearOpMode{
     @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode(){
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         //Front Drive Motors Initialization
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
         frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -87,6 +90,8 @@ public class MotorPos extends LinearOpMode{
 
         snapshotAnalysis = pipeline.getAnalysis();
 
+        FtcDashboard.getInstance().startCameraStream(webcam, 0);
+
         telemetry.addLine("Waiting for Robot Initialization...");
         telemetry.update();
 
@@ -100,11 +105,14 @@ public class MotorPos extends LinearOpMode{
             telemetry.addData("Back Right: ", backRight.getCurrentPosition());
             telemetry.update();
 
+            backLeft.setPower((gamepad1.left_stick_y + (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 2);
+            frontLeft.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x + gamepad1.right_stick_x)) / 2);
+            backRight.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 2);
+            frontRight.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x) / 2);
+
             if(gamepad1.a){
                 webcam.stopStreaming();
             }
-
-            sleep(100);
         }
 
     }

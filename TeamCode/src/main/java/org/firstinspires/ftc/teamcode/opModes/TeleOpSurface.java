@@ -3,6 +3,8 @@
 
 package org.firstinspires.ftc.teamcode.opModes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -27,6 +29,7 @@ public class TeleOpSurface extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         //Front Drive Motors Initialization
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
@@ -94,7 +97,7 @@ public class TeleOpSurface extends LinearOpMode {
 
                 //Elevator Middle
                 if (gamepad1.dpad_left){
-                    elevator.setLiftPosition(3110);
+                    elevator.setLiftPosition(1000); //3110
                 }
 
             }
