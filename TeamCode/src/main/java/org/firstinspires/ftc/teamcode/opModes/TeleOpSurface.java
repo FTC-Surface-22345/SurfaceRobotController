@@ -37,7 +37,6 @@ public class TeleOpSurface extends LinearOpMode {
 
         //Back Drive Motors Initialization
         backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
         backRight.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
 
@@ -61,10 +60,10 @@ public class TeleOpSurface extends LinearOpMode {
                 telemetry.addData("Back Right: ", backRight.getCurrentPosition());
                 telemetry.update();
 
-                backLeft.setPower((gamepad1.left_stick_y + (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 2);
-                frontLeft.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x + gamepad1.right_stick_x)) / 2);
-                backRight.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 2);
-                frontRight.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x) / 2);
+                backLeft.setPower((gamepad1.left_stick_y + (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 1.3);
+                frontLeft.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x + gamepad1.right_stick_x)) / 1.3);
+                backRight.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 1.3);
+                frontRight.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x) / 1.3);
 
                 //Close Claw
                  if (gamepad1.right_bumper) {

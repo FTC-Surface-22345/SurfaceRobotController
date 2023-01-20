@@ -5,8 +5,11 @@ package org.firstinspires.ftc.teamcode.opModes;
 
 import android.annotation.SuppressLint;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -36,28 +39,29 @@ public class AutoOpSurface extends LinearOpMode{
     @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode(){
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         //Front Drive Motors Initialization
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
         frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
         frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-
+        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         //Back Drive Motors Initialization
         backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
         backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
         backRight.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
         backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+
 
 
         //Claw Initialization
@@ -93,12 +97,48 @@ public class AutoOpSurface extends LinearOpMode{
         while (opModeIsActive())
         {
             telemetry.addData("avg", pipeline.getColorAverage());
-
+            telemetry.addData("Front Left: ", frontLeft.getCurrentPosition());
+            telemetry.addData("Front Right: ", frontRight.getCurrentPosition());
+            telemetry.addData("Back Left: ", backLeft.getCurrentPosition());
+            telemetry.addData("Back Right: ", backRight.getCurrentPosition());
             telemetry.update();
 
-            if(gamepad1.a){
-                webcam.stopStreaming();
-            }
+            frontLeft.setTargetPosition(-1180);
+            frontRight.setTargetPosition(-1180);
+            backLeft.setTargetPosition(1180);
+            backRight.setTargetPosition(-1180);
+
+            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+            frontLeft.setPower(0.8);
+            frontRight.setPower(0.8);
+            backLeft.setPower(0.8);
+            backRight.setPower(0.8);
+
+            frontLeft.setTargetPosition(-3080);
+            frontRight.setTargetPosition(770);
+            backLeft.setTargetPosition(770);
+            backRight.setTargetPosition(-3080);
+
+            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+            frontLeft.setPower(0.8);
+            frontRight.setPower(0.8);
+            backLeft.setPower(0.8);
+            backRight.setPower(0.8);
+
+
+
+
+//            if(gamepad1.a){
+//                webcam.stopStreaming();
+//            }
 
             sleep(100);
         }
