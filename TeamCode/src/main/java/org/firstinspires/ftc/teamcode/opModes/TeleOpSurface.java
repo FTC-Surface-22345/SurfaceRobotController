@@ -7,10 +7,8 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Elevator;
 
@@ -25,6 +23,8 @@ public class TeleOpSurface extends LinearOpMode {
     Claw claw = new Claw();
 
     Elevator elevator = new Elevator();
+
+    int height = 0;
 
 
     @Override
@@ -87,16 +87,37 @@ public class TeleOpSurface extends LinearOpMode {
                  //Elevator Fully Up
                 if (gamepad1.dpad_up){
                     elevator.setLiftPosition(4180);
+                    height = 4180;
+
                 }
 
                 //Elevator Down
                 if (gamepad1.dpad_down){
                     elevator.setLiftPosition(50);
+                    height = 50;
                 }
 
                 //Elevator Middle
                 if (gamepad1.dpad_left){
-                    elevator.setLiftPosition(1000); //3110
+                    elevator.setLiftPosition(2900); //2900
+                    height = 3110;
+                }
+
+                //Elevator Manual Up
+                if (gamepad1.right_trigger > 0.3){
+                    elevator.setLiftPosition(height + 15);
+                    height++;
+                }
+
+                //Elevator Manual Down
+                if (gamepad1.left_trigger > 0.3){
+                    elevator.setLiftPosition(height - 15);
+                    height--;
+                }
+
+                if (gamepad1.dpad_right){
+                    elevator.setLiftPosition(1780);
+                    height = 1780;
                 }
 
             }

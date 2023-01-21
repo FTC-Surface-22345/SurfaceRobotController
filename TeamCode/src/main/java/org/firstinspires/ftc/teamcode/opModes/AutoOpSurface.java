@@ -7,20 +7,22 @@ import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Elevator;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.utility.OpenCV;
-import org.openftc.easyopencv.*;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous
-public class AutoOpSurface extends LinearOpMode{
+public class AutoOpSurface extends LinearOpMode {
 
 
     DcMotorEx frontLeft;
@@ -28,7 +30,7 @@ public class AutoOpSurface extends LinearOpMode{
     DcMotorEx backRight;
     DcMotorEx frontRight;
 
-    Claw mainClaw = new Claw();
+    Claw claw = new Claw();
 
     Elevator elevator = new Elevator();
 
@@ -38,7 +40,7 @@ public class AutoOpSurface extends LinearOpMode{
 
     @SuppressLint("DefaultLocale")
     @Override
-    public void runOpMode(){
+    public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         //Front Drive Motors Initialization
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
@@ -62,11 +64,13 @@ public class AutoOpSurface extends LinearOpMode{
         backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
 
-
-
         //Claw Initialization
-        mainClaw.init(hardwareMap);
+        claw.init(hardwareMap);
         boolean clawState = false; //closed
+
+        //Elevator Initialization
+        elevator.init(hardwareMap);
+        int elevatorLevel = 0;
 
         //Camera Initialization
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -75,14 +79,15 @@ public class AutoOpSurface extends LinearOpMode{
         webcam.setPipeline(pipeline);
 
         ((OpenCvWebcam) webcam).setMillisecondsPermissionTimeout(5000);
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened(){
-                webcam.startStreaming(1280,720,OpenCvCameraRotation.UPRIGHT);
+            public void onOpened() {
                 webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
+                webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
             }
+
             @Override
-            public void onError(int errorCode){
+            public void onError(int errorCode) {
                 telemetry.addData("Camera Initialization: ", "Failed");
                 telemetry.update();
             }
@@ -94,8 +99,9 @@ public class AutoOpSurface extends LinearOpMode{
         telemetry.update();
 
         waitForStart();
-        while (opModeIsActive())
-        {
+        while (opModeIsActive() && !isStopRequested()) {
+            claw.closeServo();
+
             telemetry.addData("avg", pipeline.getColorAverage());
             telemetry.addData("Front Left: ", frontLeft.getCurrentPosition());
             telemetry.addData("Front Right: ", frontRight.getCurrentPosition());
@@ -103,53 +109,144 @@ public class AutoOpSurface extends LinearOpMode{
             telemetry.addData("Back Right: ", backRight.getCurrentPosition());
             telemetry.update();
 
-            frontLeft.setTargetPosition(-1180);
-            frontRight.setTargetPosition(-1180);
-            backLeft.setTargetPosition(1180);
-            backRight.setTargetPosition(-1180);
+            while (frontLeft.getCurrentPosition() > -1160) {
+                frontLeft.setTargetPosition(-1160);
+                frontRight.setTargetPosition(-1160);
+                backLeft.setTargetPosition(1160);
+                backRight.setTargetPosition(-1160);
 
-            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-            frontLeft.setPower(0.8);
-            frontRight.setPower(0.8);
-            backLeft.setPower(0.8);
-            backRight.setPower(0.8);
+                frontLeft.setPower(0.8);
+                frontRight.setPower(0.8);
+                backLeft.setPower(0.8);
+                backRight.setPower(0.8);
 
-            frontLeft.setTargetPosition(-3080);
-            frontRight.setTargetPosition(770);
-            backLeft.setTargetPosition(770);
-            backRight.setTargetPosition(-3080);
+                telemetry.addData("avg", pipeline.getColorAverage());
+                telemetry.addData("Front Left: ", frontLeft.getCurrentPosition());
+                telemetry.addData("Front Right: ", frontRight.getCurrentPosition());
+                telemetry.addData("Back Left: ", backLeft.getCurrentPosition());
+                telemetry.addData("Back Right: ", backRight.getCurrentPosition());
+                telemetry.update();
+            }
 
-            frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-            frontLeft.setPower(0.8);
-            frontRight.setPower(0.8);
-            backLeft.setPower(0.8);
-            backRight.setPower(0.8);
-
-
+            sleep(1500);
 
 
-//            if(gamepad1.a){
-//                webcam.stopStreaming();
-//            }
+            while (frontLeft.getCurrentPosition() > -1900) {
+                frontLeft.setTargetPosition(-1900);
+                frontRight.setTargetPosition(1900);
+                backLeft.setTargetPosition(-1900);
+                backRight.setTargetPosition(-1900);
 
-            sleep(100);
+                frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+                frontLeft.setPower(0.4);
+                frontRight.setPower(0.4);
+                backLeft.setPower(0.4);
+                backRight.setPower(0.4);
+
+                telemetry.addData("avg", pipeline.getColorAverage());
+                telemetry.addData("Front Left: ", frontLeft.getCurrentPosition());
+                telemetry.addData("Front Right: ", frontRight.getCurrentPosition());
+                telemetry.addData("Back Left: ", backLeft.getCurrentPosition());
+                telemetry.addData("Back Right: ", backRight.getCurrentPosition());
+                telemetry.update();
+            }
+
+            frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+            sleep(1200);
+
+            elevator.setLiftPosition(4180);
+
+            sleep(2000);
+
+            while (frontLeft.getCurrentPosition() > -180) {
+                frontLeft.setTargetPosition(-180);
+                frontRight.setTargetPosition(-180);
+                backLeft.setTargetPosition(180);
+                backRight.setTargetPosition(-180);
+
+                frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+                frontLeft.setPower(0.4);
+                frontRight.setPower(0.4);
+                backLeft.setPower(0.4);
+                backRight.setPower(0.4);
+
+                telemetry.addData("avg", pipeline.getColorAverage());
+                telemetry.addData("Front Left: ", frontLeft.getCurrentPosition());
+                telemetry.addData("Front Right: ", frontRight.getCurrentPosition());
+                telemetry.addData("Back Left: ", backLeft.getCurrentPosition());
+                telemetry.addData("Back Right: ", backRight.getCurrentPosition());
+                telemetry.update();
+            }
+
+            sleep(2000);
+
+            claw.openServo();
+
+
+            telemetry.addData("Run", "Reached");
+
+            sleep(500);
+
+            while (frontLeft.getCurrentPosition() < 180) {
+                frontLeft.setTargetPosition(180);
+                frontRight.setTargetPosition(180);
+                backLeft.setTargetPosition(-180);
+                backRight.setTargetPosition(180);
+
+                frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+                frontLeft.setPower(0.4);
+                frontRight.setPower(0.4);
+                backLeft.setPower(0.4);
+                backRight.setPower(0.4);
+
+
+                telemetry.addData("avg", pipeline.getColorAverage());
+                telemetry.addData("Front Left: ", frontLeft.getCurrentPosition());
+                telemetry.addData("Front Right: ", frontRight.getCurrentPosition());
+                telemetry.addData("Back Left: ", backLeft.getCurrentPosition());
+                telemetry.addData("Back Right: ", backRight.getCurrentPosition());
+                telemetry.update();
+            }
+
+            sleep(500);
+
+            elevator.setLiftPosition(50);
+
+            sleep(4000);
+
+            break;
+
+
         }
 
+
     }
-
-    
-
-
-
-
 
 
 }

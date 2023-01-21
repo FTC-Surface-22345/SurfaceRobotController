@@ -46,8 +46,8 @@ public class Elevator{
             rightPower = 1;
         } else if (currentPos > targetPos) {
             // Going down
-            leftPower = 0.8;
-            rightPower = -0.8;
+            leftPower = 0.3;
+            rightPower = -0.3;
         }
 
         leftElevator.setTargetPosition((int) targetPos);
