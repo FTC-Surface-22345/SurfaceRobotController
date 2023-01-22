@@ -124,6 +124,7 @@ public class AutoOpSurface extends LinearOpMode {
             telemetry.addData("Back Right: ", backRight.getCurrentPosition());
             telemetry.update();
 
+            //Forward
             while (frontLeft.getCurrentPosition() > -1160) {
                 frontLeft.setTargetPosition(-1160);
                 frontRight.setTargetPosition(-1160);
@@ -155,7 +156,7 @@ public class AutoOpSurface extends LinearOpMode {
 
             sleep(1500);
 
-
+            //Strafe Right
             while (frontLeft.getCurrentPosition() > -1900) {
                 frontLeft.setTargetPosition(-1900);
                 frontRight.setTargetPosition(1900);
@@ -191,6 +192,7 @@ public class AutoOpSurface extends LinearOpMode {
 
             sleep(2000);
 
+            //Forward
             while (frontLeft.getCurrentPosition() > -180) {
                 frontLeft.setTargetPosition(-180);
                 frontRight.setTargetPosition(-180);
@@ -224,6 +226,7 @@ public class AutoOpSurface extends LinearOpMode {
 
             sleep(500);
 
+            //Backward
             //while (frontLeft.getCurrentPosition() < 180) {
             frontLeft.setTargetPosition(180);
             frontRight.setTargetPosition(180);
