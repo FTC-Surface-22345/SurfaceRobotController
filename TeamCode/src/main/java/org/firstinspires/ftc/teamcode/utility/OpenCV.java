@@ -43,9 +43,9 @@ public class OpenCV
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(109,98);
-        static final int REGION_WIDTH = 20;
-        static final int REGION_HEIGHT = 20;
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(500, 780);
+        static final int REGION_WIDTH = 220;
+        static final int REGION_HEIGHT = 300;
 
         /*
          * Points which actually define the sample region rectangles, derived from above values
