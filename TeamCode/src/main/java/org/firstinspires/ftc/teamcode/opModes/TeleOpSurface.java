@@ -60,10 +60,10 @@ public class TeleOpSurface extends LinearOpMode {
                 telemetry.addData("Back Right: ", backRight.getCurrentPosition());
                 telemetry.update();
 
-                backLeft.setPower((gamepad1.left_stick_y + (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 1.3);
-                frontLeft.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x + gamepad1.right_stick_x)) / 1.3);
-                backRight.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 1.3);
-                frontRight.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x) / 1.3);
+                backLeft.setPower((gamepad1.left_stick_y + (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 1.6);
+                frontLeft.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x + gamepad1.right_stick_x)) / 1.6);
+                backRight.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 1.6);
+                frontRight.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x) / 1.6);
 
                 //Close Claw
                  if (gamepad1.right_bumper) {
@@ -105,13 +105,13 @@ public class TeleOpSurface extends LinearOpMode {
 
                 //Elevator Manual Up
                 if (gamepad1.right_trigger > 0.3){
-                    elevator.setLiftPosition(height + 15);
+                    elevator.setLiftPosition(height + 250);
                     height++;
                 }
-
+                .
                 //Elevator Manual Down
                 if (gamepad1.left_trigger > 0.3){
-                    elevator.setLiftPosition(height - 15);
+                    elevator.setLiftPosition(height - 250);
                     height--;
                 }
 

@@ -22,7 +22,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous
-public class AutoOpSurface extends LinearOpMode {
+public class AutoOpSurface2 extends LinearOpMode {
 
 
     DcMotorEx frontLeft;
@@ -86,7 +86,7 @@ public class AutoOpSurface extends LinearOpMode {
             @Override
             public void onOpened() {
                 webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
-                webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(1280, 720, OpenCvCameraRotation.SIDEWAYS_LEFT);
                 FtcDashboard.getInstance().startCameraStream(webcam, 0);
             }
 
@@ -124,7 +124,6 @@ public class AutoOpSurface extends LinearOpMode {
             telemetry.addData("Back Right: ", backRight.getCurrentPosition());
             telemetry.update();
 
-            //Forward
             while (frontLeft.getCurrentPosition() > -1160) {
                 frontLeft.setTargetPosition(-1160);
                 frontRight.setTargetPosition(-1160);
@@ -156,12 +155,12 @@ public class AutoOpSurface extends LinearOpMode {
 
             sleep(1500);
 
-            //Strafe Right
-            while (frontLeft.getCurrentPosition() > -1900) {
-                frontLeft.setTargetPosition(-1900);
-                frontRight.setTargetPosition(1900);
-                backLeft.setTargetPosition(-1900);
-                backRight.setTargetPosition(-1900);
+
+            while (frontLeft.getCurrentPosition() < 1900) {
+                frontLeft.setTargetPosition(1900);
+                frontRight.setTargetPosition(-1900);
+                backLeft.setTargetPosition(1900);
+                backRight.setTargetPosition(1900);
 
                 frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -192,7 +191,6 @@ public class AutoOpSurface extends LinearOpMode {
 
             sleep(2000);
 
-            //Forward
             while (frontLeft.getCurrentPosition() > -180) {
                 frontLeft.setTargetPosition(-180);
                 frontRight.setTargetPosition(-180);
@@ -226,12 +224,11 @@ public class AutoOpSurface extends LinearOpMode {
 
             sleep(500);
 
-            //Backward
             //while (frontLeft.getCurrentPosition() < 180) {
-            frontLeft.setTargetPosition(180);
-            frontRight.setTargetPosition(180);
-            backLeft.setTargetPosition(-180);
-            backRight.setTargetPosition(180);
+            frontLeft.setTargetPosition(1160);
+            frontRight.setTargetPosition(1160);
+            backLeft.setTargetPosition(-1160);
+            backRight.setTargetPosition(1160);
 
             frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
