@@ -3,10 +3,13 @@
 
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import static org.firstinspires.ftc.teamcode.subsystems.dashConstants.closeClawL;
+import static org.firstinspires.ftc.teamcode.subsystems.dashConstants.closeClawR;
+import static org.firstinspires.ftc.teamcode.subsystems.dashConstants.openClawL;
+import static org.firstinspires.ftc.teamcode.subsystems.dashConstants.openClawR;
+
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Claw{
@@ -14,26 +17,37 @@ public class Claw{
 
     Servo leftServo;
     Servo rightServo;
-    double openPositionLeft = 0.55; //While opMode Active --> 0.75
-    double closePositionLeft = 0.80;
-    double openPositionRight = 1.0; //While opMode Active --> 0.8
-    double closePositionRight = 0.75;
+//    double openPositionLeft = 0.55; //While opMode Active --> 0.75
+//    double closePositionLeft = 0.80;
+//    double openPositionRight = 1.0; //While opMode Active --> 0.8
+//    double closePositionRight = 0.75;
 
     public void init(HardwareMap hardwareMap){
         leftServo = hardwareMap.get(Servo.class, "leftClaw");
         rightServo = hardwareMap.get(Servo.class, "rightClaw");
     }
 
-    public void openServo(){
-        leftServo.setPosition(openPositionLeft);
-        rightServo.setPosition(openPositionRight);
+    public void open(){
+        leftServo.setPosition(openClawL);
+        rightServo.setPosition(openClawR);
     }
 
-    public void closeServo(){
-        leftServo.setPosition(closePositionLeft);
-        rightServo.setPosition(closePositionRight);
+    public void close(){
+        leftServo.setPosition(closeClawL);
+        rightServo.setPosition(closeClawR);
     }
 
+
+    public void moveClaw(dashConstants.clawState input){
+        switch (input){
+            case OPEN:
+                open();
+
+            case CLOSE:
+                close();
+
+        }
+    }
 
 
 }
