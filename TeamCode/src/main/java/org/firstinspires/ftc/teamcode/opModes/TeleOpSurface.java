@@ -108,7 +108,7 @@ public class TeleOpSurface extends LinearOpMode {
                     elevator.setLiftPosition(height + 250);
                     height++;
                 }
-                .
+
                 //Elevator Manual Down
                 if (gamepad1.left_trigger > 0.3){
                     elevator.setLiftPosition(height - 250);
