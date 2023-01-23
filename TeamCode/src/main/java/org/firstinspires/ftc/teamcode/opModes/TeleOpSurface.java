@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Elevator;
+import org.firstinspires.ftc.teamcode.subsystems.dashConstants;
 
 @TeleOp(name = "TeleOpSurface")
 public class TeleOpSurface extends LinearOpMode {
@@ -86,39 +87,47 @@ public class TeleOpSurface extends LinearOpMode {
 
                 //Elevator High
                 if (gamepad1.dpad_up){
-                    elevator.setLiftPosition(4180);
-                    height = 4180;
+//                    elevator.setLiftPosition(4180);
+//                    height = 4180;
+                    elevator.moveLift(dashConstants.elevatorPos.HIGH);
 
                 }
 
                 //Elevator Middle
                 if (gamepad1.dpad_left){
-                    elevator.setLiftPosition(2900); //2900
-                    height = 3110;
+//                    elevator.setLiftPosition(2900); //2900
+//                    height = 3110;
+                    elevator.moveLift(dashConstants.elevatorPos.MIDDLE);
                 }
 
                 //Elevator Low
                 if (gamepad1.dpad_right){
-                    elevator.setLiftPosition(1780);
-                    height = 1780;
+//                    elevator.setLiftPosition(1780);
+//                    height = 1780;
+                    elevator.moveLift(dashConstants.elevatorPos.LOW);
                 }
 
                 //Elevator Down
                 if (gamepad1.dpad_down){
-                    elevator.setLiftPosition(50);
-                    height = 50;
+//                    elevator.setLiftPosition(50);
+//                    height = 50;
+                    elevator.moveLift(dashConstants.elevatorPos.GROUND);
+                }
+
+                if (gamepad1.y){
+                    elevator.moveLift(dashConstants.elevatorPos.GJUNC);
                 }
 
                 //Elevator Manual Up
                 if (gamepad1.right_trigger > 0.3){
-                    elevator.setLiftPosition(height + 80);
-                    height++;
+//                    elevator.setLiftPosition(height + 80);
+//                    height++;
                 }
 
                 //Elevator Manual Down
                 if (gamepad1.left_trigger > 0.3){
-                    elevator.setLiftPosition(height - 80);
-                    height--;
+//                    elevator.setLiftPosition(height - 80);
+//                    height--;
                 }
 
 

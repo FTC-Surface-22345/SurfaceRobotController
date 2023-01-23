@@ -43,5 +43,12 @@ public class dashConstants {
     public static double openClawR = .80;
     public static double closeClawL = 1;
     public static double closeClawR = .75;
+
+    public static int C1;
+    public static int C2;
+    public static int C3;
+    public static int C4;
+    public static int C5;
+
 }
 

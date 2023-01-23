@@ -13,16 +13,15 @@ public class Elevator {
     DcMotorEx right;
     int height = 0;
     int stackNum = 5;
-    int stackPos;
     double currentPosition;
     double leftPower;
     double rightPower;
 
     //INIT WITH testDrive HARDWARE MAP - @NOTE RENAME testDrive TO SurfaceHardwareMap
     public void init(HardwareMap hardwareMap) {
-        left = hardwareMap.get(DcMotorEx.class, "left");
+        left = hardwareMap.get(DcMotorEx.class, "leftElevator");
         left.setDirection(DcMotor.Direction.REVERSE);
-        right = hardwareMap.get(DcMotorEx.class, "right");
+        right = hardwareMap.get(DcMotorEx.class, "rightElevator");
         right.setDirection(DcMotor.Direction.REVERSE);
 
         left.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -51,11 +50,6 @@ public class Elevator {
                 move(4180);
                 break;
 
-            case STACK:
-                move(stackPos * stackNum);
-                stackNum--;
-                break;
-
             case GJUNC:
                 move(150);
                 break;
@@ -70,8 +64,8 @@ public class Elevator {
 
         if (currentPos < target) {
             //UP
-            leftPower = -1;
-            rightPower = 1;
+            leftPower = -.4;
+            rightPower = .4;
         } else if (currentPos > target) {
             //DOWN
             leftPower = 0.45;

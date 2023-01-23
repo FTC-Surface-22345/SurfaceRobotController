@@ -24,7 +24,6 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous
 public class AutoOpSurface extends LinearOpMode {
 
-
     DcMotorEx frontLeft;
     DcMotorEx backLeft;
     DcMotorEx backRight;
@@ -44,22 +43,22 @@ public class AutoOpSurface extends LinearOpMode {
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         //Front Drive Motors Initialization
-        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft"); // reverse ==> reverse
         frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
+        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight"); // reverse ==> no reverse
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
         frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         //Back Drive Motors Initialization
-        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
+        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft"); // no reverse ==> reverse
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
         backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
+        backRight = hardwareMap.get(DcMotorEx.class, "backRight"); // reverse ==> no reverse
         backRight.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
         backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
