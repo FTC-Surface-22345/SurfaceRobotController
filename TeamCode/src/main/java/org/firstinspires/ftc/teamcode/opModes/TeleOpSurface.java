@@ -67,7 +67,7 @@ public class TeleOpSurface extends LinearOpMode {
 
                 //Close Claw
                  if (gamepad1.right_bumper) {
-                     claw.openServo();
+                     claw.open();
 //                     telemetry.addData("Claw State: ", "Open");
 //                     telemetry.update();
                      sleep(350);
@@ -77,24 +77,18 @@ public class TeleOpSurface extends LinearOpMode {
 
                  //Open Claw
                  if(gamepad1.left_bumper) {
-                     claw.closeServo();
+                     claw.close();
 //                     telemetry.addData("Claw State: ", "Closed");
 //                     telemetry.update();
                      sleep(350);
                      clawState = false;
                  }
 
-                 //Elevator Fully Up
+                //Elevator High
                 if (gamepad1.dpad_up){
                     elevator.setLiftPosition(4180);
                     height = 4180;
 
-                }
-
-                //Elevator Down
-                if (gamepad1.dpad_down){
-                    elevator.setLiftPosition(50);
-                    height = 50;
                 }
 
                 //Elevator Middle
@@ -103,22 +97,31 @@ public class TeleOpSurface extends LinearOpMode {
                     height = 3110;
                 }
 
+                //Elevator Low
+                if (gamepad1.dpad_right){
+                    elevator.setLiftPosition(1780);
+                    height = 1780;
+                }
+
+                //Elevator Down
+                if (gamepad1.dpad_down){
+                    elevator.setLiftPosition(50);
+                    height = 50;
+                }
+
                 //Elevator Manual Up
                 if (gamepad1.right_trigger > 0.3){
-                    elevator.setLiftPosition(height + 250);
+                    elevator.setLiftPosition(height + 80);
                     height++;
                 }
 
                 //Elevator Manual Down
                 if (gamepad1.left_trigger > 0.3){
-                    elevator.setLiftPosition(height - 250);
+                    elevator.setLiftPosition(height - 80);
                     height--;
                 }
 
-                if (gamepad1.dpad_right){
-                    elevator.setLiftPosition(1780);
-                    height = 1780;
-                }
+
 
             }
         }
