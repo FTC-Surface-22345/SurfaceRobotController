@@ -22,7 +22,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous
-public class AutoOpSurface extends LinearOpMode {
+public class AutoOpSurface2 extends LinearOpMode {
 
 
     DcMotorEx frontLeft;
@@ -99,14 +99,14 @@ public class AutoOpSurface extends LinearOpMode {
 
         snapshotAnalysis = pipeline.getAnalysis();
 
-        if (pipeline.getColorAverage() <= 129) {
+        if (pipeline.getColorAverage() < 120) {
             zone = 1;
         }
-        else if (pipeline.getColorAverage() >= 140 && pipeline.getColorAverage() <= 145){
-            zone = 3;
+        else if (pipeline.getColorAverage() >= 130){
+            zone = 2;
         }
         else{
-            zone = 2;
+            zone = 3;
         }
 
         telemetry.addLine("Waiting for Robot Initialization...");
@@ -114,7 +114,7 @@ public class AutoOpSurface extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
-            claw.closeServo();
+            claw.close();
 
             telemetry.addData("Robot Status: ", "Initialized");
             telemetry.addData("avg", pipeline.getColorAverage());
@@ -124,7 +124,6 @@ public class AutoOpSurface extends LinearOpMode {
             telemetry.addData("Back Right: ", backRight.getCurrentPosition());
             telemetry.update();
 
-            //Forward
             while (frontLeft.getCurrentPosition() > -1160) {
                 frontLeft.setTargetPosition(-1160);
                 frontRight.setTargetPosition(-1160);
@@ -156,12 +155,12 @@ public class AutoOpSurface extends LinearOpMode {
 
             sleep(1500);
 
-            //Strafe Right
-            while (frontLeft.getCurrentPosition() > -1900) {
-                frontLeft.setTargetPosition(-1900);
-                frontRight.setTargetPosition(1900);
-                backLeft.setTargetPosition(-1900);
-                backRight.setTargetPosition(-1900);
+
+            while (frontLeft.getCurrentPosition() < 1900) {
+                frontLeft.setTargetPosition(1900);
+                frontRight.setTargetPosition(-1900);
+                backLeft.setTargetPosition(1900);
+                backRight.setTargetPosition(1900);
 
                 frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -192,7 +191,6 @@ public class AutoOpSurface extends LinearOpMode {
 
             sleep(2000);
 
-            //Forward
             while (frontLeft.getCurrentPosition() > -180) {
                 frontLeft.setTargetPosition(-180);
                 frontRight.setTargetPosition(-180);
@@ -219,19 +217,18 @@ public class AutoOpSurface extends LinearOpMode {
 
             sleep(2000);
 
-            claw.openServo();
+            claw.open();
 
 
             telemetry.addData("Run", "Reached");
 
             sleep(500);
 
-            //Backward
-            while (frontLeft.getCurrentPosition() > -1160) {
-            frontLeft.setTargetPosition(-1160);
-            frontRight.setTargetPosition(-1160);
-            backLeft.setTargetPosition(1160);
-            backRight.setTargetPosition(-1160);
+            //while (frontLeft.getCurrentPosition() < 180) {
+            frontLeft.setTargetPosition(1160);
+            frontRight.setTargetPosition(1160);
+            backLeft.setTargetPosition(-1160);
+            backRight.setTargetPosition(1160);
 
             frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -249,22 +246,21 @@ public class AutoOpSurface extends LinearOpMode {
             telemetry.addData("Front Right: ", frontRight.getCurrentPosition());
             telemetry.addData("Back Left: ", backLeft.getCurrentPosition());
             telemetry.addData("Back Right: ", backRight.getCurrentPosition());
-            telemetry.addData("zone",                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                zone);
             telemetry.update();
-            }
+            //}
 
             sleep(500);
 
             elevator.setLiftPosition(50);
 
-            sleep(2500);
-
-            //if (zone == 3){
-                //while (frontLeft.getCurrentPosition() < 800) {
-//                    frontLeft.setTargetPosition(1200);
-//                    frontRight.setTargetPosition(-1200);
-//                    backLeft.setTargetPosition(1200);
-//                    backRight.setTargetPosition(1200);
+            sleep(4000);
+//
+//            if (zone == 1){
+//                while (frontLeft.getCurrentPosition() < 800) {
+//                    frontLeft.setTargetPosition(800);
+//                    frontRight.setTargetPosition(-800);
+//                    backLeft.setTargetPosition(800);
+//                    backRight.setTargetPosition(800);
 //
 //                    frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 //                    frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -282,9 +278,9 @@ public class AutoOpSurface extends LinearOpMode {
 //                    telemetry.addData("Back Left: ", backLeft.getCurrentPosition());
 //                    telemetry.addData("Back Right: ", backRight.getCurrentPosition());
 //                    telemetry.update();
-//                //}
-          //  }
-
+//                }
+//            }
+//
 //            if (zone == 2){
 //                while (frontLeft.getCurrentPosition() < 1900) {
 //                    frontLeft.setTargetPosition(1900);
@@ -311,7 +307,7 @@ public class AutoOpSurface extends LinearOpMode {
 //                }
 //            }
 //
-//            if (zone == 1){
+//            if (zone == 3){
 //                while (frontLeft.getCurrentPosition() < 2600) {
 //                    frontLeft.setTargetPosition(2600);
 //                    frontRight.setTargetPosition(-2600);
