@@ -10,8 +10,8 @@ Welcome to FTC Team 22345's Public Repository for the FTC 2022-2023 Season Power
 2. AutoOpSurface -  the base code for the autonomous control we have for each of the positions. 
     1. AutoOpBlue1 - 
     2. AutoOpBlue2 - 
-    3. AutoOpBlue3 - 
-    4. AutoOpBlue4 - 
+    3. AutoOpRed1 - 
+    4. AutoOpRed2 - 
 3. LiftLmits (package: test) - a TeleOpMode for calculating the lift limits and positions to score cones using 
    specified positions
 4. MotorPos (package: test) - A TeleOpMode for calculating the motor positions for each Autonomous Phase and Position
