@@ -16,9 +16,9 @@ public class PID {
     double integralSum = 0;
 
     double out;
-    ElapsedTime timer;
+    ElapsedTime timer = new ElapsedTime();
 
-    public void init(ElapsedTime newTimer, int p, int i, int d) {
+    public void init(ElapsedTime newTimer, double p, double i, double d) {
         timer = newTimer;
         lastError = 0;
 

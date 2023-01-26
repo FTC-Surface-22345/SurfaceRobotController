@@ -39,16 +39,28 @@ public class dashConstants {
     }
 
     //FIXED CONSTANTS FOR CLAW SERVO POSITIONS - DO NOT CHANGE UNLESS ERRORS WITH CLAW
-    public static double openClawL = .55;
-    public static double openClawR = .80;
-    public static double closeClawL = 1;
-    public static double closeClawR = .75;
+    public static double openClawL = .6;
+    public static double openClawR = 1.1;
+    public static double closeClawL = 0.85;
+    public static double closeClawR = 0.75;
 
     public static int C1;
     public static int C2;
     public static int C3;
     public static int C4;
     public static int C5;
+
+    public static double forwardP = 0.02;
+    public static double forwardI = 0;
+    public static double forwardD = 0;
+
+    public static double turnP = 0.02;
+    public static double turnI = 0;
+    public static double turnD = 0;
+
+    public static double[] forward = {forwardP, forwardI, forwardD};
+    public static double[] turn = {turnP, turnI, turnD};
+    public static double[] strafe = {.02, 0, 0};
 
 }
 

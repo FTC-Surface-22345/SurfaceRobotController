@@ -38,6 +38,7 @@ public class TeleOpSurface extends LinearOpMode {
 
         //Back Drive Motors Initialization
         backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
+        //backLeft.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
         backRight.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
 
