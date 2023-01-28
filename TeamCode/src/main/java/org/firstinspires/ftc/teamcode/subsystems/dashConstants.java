@@ -41,8 +41,8 @@ public class dashConstants {
     //FIXED CONSTANTS FOR CLAW SERVO POSITIONS - DO NOT CHANGE UNLESS ERRORS WITH CLAW
     public static double openClawL = .6;
     public static double openClawR = 1.1;
-    public static double closeClawL = 0.85;
-    public static double closeClawR = 0.75;
+    public static double closeClawL = 0.80;
+    public static double closeClawR = 0.80;
 
     public static int C1;
     public static int C2;
@@ -54,13 +54,29 @@ public class dashConstants {
     public static double forwardI = 0;
     public static double forwardD = 0;
 
-    public static double turnP = 0.02;
+    public static double turnP = 0.06;
     public static double turnI = 0;
     public static double turnD = 0;
 
     public static double[] forward = {forwardP, forwardI, forwardD};
     public static double[] turn = {turnP, turnI, turnD};
     public static double[] strafe = {.02, 0, 0};
+
+    public static double targetHeading = 0;
+    public static double driveSpeed = 0;
+    public static double turnSpeed = 0;
+    public static double leftSpeed = 0;
+    public static double rightSpeed = 0;
+    public static double leftTarget = 0;
+    public static double rightTarget = 0;
+
+    public static double HEADING_THRESHOLD = 0.08;
+
+    public static double COUNTS_PER_MOTOR_REV = 537.7 ; // GoBILDA 312 RPM Yellow Jacket
+    public static double DRIVE_GEAR_REDUCTION = 1.0 ; // No External Gearing.
+    public static double WHEEL_DIAMETER_INCHES = 4.0 ; // For figuring circumference
+    public static double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
+
 
 }
 
