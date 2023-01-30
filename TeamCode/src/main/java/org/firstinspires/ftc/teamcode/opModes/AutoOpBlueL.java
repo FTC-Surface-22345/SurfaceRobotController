@@ -27,36 +27,35 @@ public class AutoOpBlueL extends LinearOpMode{
     @SuppressLint("Default Locale")
     @Override
     public void runOpMode(){
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetry = FtcDashboard.getInstance().getTelemetry();
 
         telemetry.addLine("Waiting for Robot Initialization...");
         telemetry.update();
-        drivetrain.init(hardwareMap);
+        drivetrain.init(hardwareMap, new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry()));
 
+        while (opModeInInit()){
+            drivetrain.resetIMU();
+        }
         waitForStart();
 
+//        while (opModeIsActive() && !isStopRequested())
+//        {
+//            telemetry.addData("Front Left: ", drivetrain.getFLPos());
+//            telemetry.addData("Front Right: ", drivetrain.getFRPos());
+//            telemetry.addData("Back Left: ", drivetrain.getBLPos());
+//            telemetry.addData("Back Right: ", drivetrain.getBRPos());
 
-        drivetrain.forward(4000);
-        while (opModeIsActive() && !isStopRequested())
-        {
-            telemetry.addData("Front Left: ", drivetrain.getFLPos());
-            telemetry.addData("Front Right: ", drivetrain.getFRPos());
-            telemetry.addData("Back Left: ", drivetrain.getBLPos());
-            telemetry.addData("Back Right: ", drivetrain.getBRPos());
+            drivetrain.forward(400);
 
-            telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", drivetrain.zYaw());
-            telemetry.addData("Pitch (X)", "%.2f Deg.", drivetrain.xPitch());
-            telemetry.addData("Roll (Y)", "%.2f Deg.\n", drivetrain.yRoll());
 
-            telemetry.addData("Yaw (Z) velocity", "%.2f Deg/Sec", drivetrain.YawVel());
-            telemetry.addData("Pitch (X) velocity", "%.2f Deg/Sec", drivetrain.PitchVel());
-            telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", drivetrain.RollVel());
 
-            telemetry.update();
-            drivetrain.update();
+//            telemetry.update();
+//            drivetrain.update();
             //drivetrain.reset();
 
-        }
+//            break;
+
+//        }
 
     }
 

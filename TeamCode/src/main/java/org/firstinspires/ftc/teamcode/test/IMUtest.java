@@ -38,6 +38,8 @@ public class IMUtest extends LinearOpMode {
     BNO055IMU imu;
 
     Orientation angles;
+    float IMUheading;
+    float offsetAngle;
 
 
     @SuppressLint("Default Locale")
@@ -54,12 +56,23 @@ public class IMUtest extends LinearOpMode {
         telemetry.addLine("Waiting for Robot Initialization...");
         telemetry.update();
 
+        while (opModeInInit()){
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            offsetAngle = angles.firstAngle;
+            telemetry.addData("heading", angles.firstAngle);
+            telemetry.addData("roll", angles.secondAngle);
+            telemetry.addData("pitch", angles.thirdAngle);
+            telemetry.update();
+        }
         waitForStart();
         while (opModeIsActive()){
+            IMUheading = angles.firstAngle - offsetAngle;
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             telemetry.addData("heading", angles.firstAngle);
             telemetry.addData("roll", angles.secondAngle);
             telemetry.addData("pitch", angles.thirdAngle);
+            telemetry.addData("IMUheading", IMUheading);
+            telemetry.addData("offset", offsetAngle);
             telemetry.update();
         }
     }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -24,14 +25,16 @@ public class Drive {
     DcMotorEx BL;
     DcMotorEx BR;
 
+    double gain = .007;
+
     double TPI = dashConstants.COUNTS_PER_INCH; //Ticks per Inch
 
+    //IMU & IMU VARIABLES
     BNO055IMU imu;
-    Orientation angle;
+    Orientation angles;
+    float IMUheading;
+    float offsetAngle;
 
-
-    YawPitchRollAngles orientation;
-    AngularVelocity angularVelocity;
     //PIDs FOR MOVEMENT
     PID turnPID = new PID();
     PID FLPID = new PID();
@@ -39,21 +42,17 @@ public class Drive {
     PID BLPID = new PID();
     PID BRPID = new PID();
 
-    private double heading;
-    private double headingOffset = 0;
-    private final double headingError = 0;
+    double leftPower;
+    double rightPower;
+
+    MultipleTelemetry telemetry;
 
     //INITIALIZATION OF ALL MOTORS
-    public void init(HardwareMap map) {
-        imu = map.get(BNO055IMU.class, "imu");
-
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
-
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+    public void init(HardwareMap map, MultipleTelemetry tele) {
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+
         imu = map.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
@@ -61,50 +60,143 @@ public class Drive {
         FL.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
         FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         FR = map.get(DcMotorEx.class, "frontRight");
         //FR.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
         FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         BL = map.get(DcMotorEx.class, "backLeft");
         BL.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
         BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         BR = map.get(DcMotorEx.class, "backRight");
         //BR.setDirection(DcMotorSimple.Direction.REVERSE); // Delete if this breaks - only for conformity for now - In Autonomous and TeleOp
         BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        turnPID.init(new ElapsedTime(), dashConstants.turn[0], dashConstants.turn[1], dashConstants.turn[2]);
 
-        FLPID.init(new ElapsedTime(), dashConstants.forward[0], dashConstants.forward[1], dashConstants.forward[2]);
-        FRPID.init(new ElapsedTime(), dashConstants.forward[0], dashConstants.forward[1], dashConstants.forward[2]);
-        BLPID.init(new ElapsedTime(), dashConstants.forward[0], dashConstants.forward[1], dashConstants.forward[2]);
-        BRPID.init(new ElapsedTime(), dashConstants.forward[0], dashConstants.forward[1], dashConstants.forward[2]);
+        turnPID.init(new ElapsedTime(), dashConstants.turnPID[0], dashConstants.turnPID[1], dashConstants.turnPID[2]);
 
-        resetHeading();
+        //INITIALIZATION OF PIDS FOR EACH MOTOR
+        FLPID.init(new ElapsedTime(), dashConstants.movePID[0], dashConstants.movePID[1], dashConstants.movePID[2]);
+        FRPID.init(new ElapsedTime(), dashConstants.movePID[0], dashConstants.movePID[1], dashConstants.movePID[2]);
+        BLPID.init(new ElapsedTime(), dashConstants.movePID[0], dashConstants.movePID[1], dashConstants.movePID[2]);
+        BRPID.init(new ElapsedTime(), dashConstants.movePID[0], dashConstants.movePID[1], dashConstants.movePID[2]);
+
+        telemetry = tele;
+
+
     }
 
     public void forward(double target) {
-        FLPID.setTarget(target);
+//        FLPID.setTarget(target);
+//        FRPID.setTarget(target);
+//        BLPID.setTarget(target);
+//        BRPID.setTarget(target);
+
+        FL.setPower(.8);
+        BL.setPower(.8);
+        FR.setPower(.8);
+        BR.setPower(.8);
+
+        leftPower = .8;
+        rightPower = .8;
+
+        while (FR.getCurrentPosition() < 2000) {
+            updateIMU();
+//
+//            FL.setPower(leftPower);
+//            BL.setPower(leftPower);
+//            FR.setPower(rightPower);
+//            BR.setPower(rightPower);
+//
+//            telemetry.addData("FL: ", FL.getCurrentPosition());
+//            telemetry.addData("FR: ", FR.getCurrentPosition());
+//            telemetry.addData("BL: ", BL.getCurrentPosition());
+//            telemetry.addData("BR: ", BR.getCurrentPosition());
+//            telemetry.update();
+
+            FL.setPower(leftPower);
+            BL.setPower(leftPower);
+            FR.setPower(rightPower);
+            BR.setPower(rightPower);
+
+            if (Math.abs(IMUheading) > 1){
+                updateIMU();
+                leftPower = leftPower - (0 - IMUheading) * gain;
+                rightPower = leftPower + (0 - IMUheading) * gain;
+                FL.setPower(leftPower);
+                BL.setPower(leftPower);
+                FR.setPower(rightPower);
+                BR.setPower(rightPower);
+                updateIMU();
+
+                telemetry.addData("FL: ", FL.getCurrentPosition());
+                telemetry.addData("FR: ", FR.getCurrentPosition());
+                telemetry.addData("BL: ", BL.getCurrentPosition());
+                telemetry.addData("BR: ", BR.getCurrentPosition());
+                telemetry.update();
+            }
+        }
+//        while (Math.abs(IMUheading) > 1){
+//            updateIMU();
+//            leftPower = (0 - IMUheading) * gain;
+//            rightPower = - (0 - IMUheading) * gain;
+//            FL.setPower(leftPower);
+//            BL.setPower(leftPower);
+//            FR.setPower(rightPower);
+//            BR.setPower(rightPower);
+//            updateIMU();
+//        }
+
+
+
+
+        FL.setPower(0);
+        BL.setPower(0);
+        FR.setPower(0);
+        BR.setPower(0);
+
+        telemetry.addData("FL: ", FL.getCurrentPosition());
+        telemetry.addData("FR: ", FR.getCurrentPosition());
+        telemetry.addData("BL: ", BL.getCurrentPosition());
+        telemetry.addData("BR: ", BR.getCurrentPosition());
+        telemetry.update();
+
+
+
+    }
+
+    public void backward(double target){
+
+    }
+
+    public void turn(double target) {
+
+
+    }
+
+    public void strafeLeft(double target) {
+        FLPID.setTarget(-target);
         FRPID.setTarget(target);
         BLPID.setTarget(target);
+        BRPID.setTarget(-target);
+    }
+
+    public void strafeRight(double target){
+        FLPID.setTarget(target);
+        FRPID.setTarget(-target);
+        BLPID.setTarget(-target);
         BRPID.setTarget(target);
-
-    }
-
-    public void turn() {
-
-
-    }
-
-    public void strafe() {
-
     }
 
     public void update() {
@@ -141,49 +233,22 @@ public class Drive {
         BR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    public void IMUreading() {
-        zYaw();
-        xPitch();
-        yRoll();
-
-        YawVel();
-        PitchVel();
-        RollVel();
+    public void resetIMU(){
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        offsetAngle = angles.firstAngle;
     }
 
-    public double zYaw() {
-        return orientation.getYaw(AngleUnit.DEGREES);
+    public void updateIMU(){
+        IMUheading = angles.firstAngle - offsetAngle;
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        telemetry.addData("heading", angles.firstAngle);
+        telemetry.addData("roll", angles.secondAngle);
+        telemetry.addData("pitch", angles.thirdAngle);
+        telemetry.addData("IMUheading", IMUheading);
+        telemetry.addData("offset", offsetAngle);
+        telemetry.update();
     }
 
-    public double xPitch() {
-        return orientation.getPitch(AngleUnit.DEGREES);
-    }
 
-    public double yRoll() {
-        return orientation.getRoll(AngleUnit.DEGREES);
-    }
-
-    public double YawVel() {
-        return angularVelocity.zRotationRate;
-    }
-
-    public double PitchVel() {
-        return angularVelocity.xRotationRate;
-    }
-
-    public double RollVel() {
-        return angularVelocity.yRotationRate;
-    }
-
-    public double getRawHeading() {
-        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return angles.firstAngle;
-    }
-
-    public void resetHeading() {
-        // Save a new heading offset equal to the current raw heading.
-        headingOffset = getRawHeading();
-        heading = 0;
-    }
 
 }

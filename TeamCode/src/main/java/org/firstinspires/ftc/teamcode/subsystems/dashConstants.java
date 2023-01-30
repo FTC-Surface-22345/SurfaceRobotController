@@ -50,17 +50,16 @@ public class dashConstants {
     public static int C4;
     public static int C5;
 
-    public static double forwardP = 0.02;
-    public static double forwardI = 0;
-    public static double forwardD = 0;
+    public static double P = 0.01;
+    public static double I = 0;
+    public static double D = 0;
 
     public static double turnP = 0.06;
     public static double turnI = 0;
     public static double turnD = 0;
 
-    public static double[] forward = {forwardP, forwardI, forwardD};
-    public static double[] turn = {turnP, turnI, turnD};
-    public static double[] strafe = {.02, 0, 0};
+    public static double[] movePID = {P, I, D};
+    public static double[] turnPID = {turnP, turnI, turnD};
 
     public static double targetHeading = 0;
     public static double driveSpeed = 0;
