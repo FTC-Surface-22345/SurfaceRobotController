@@ -12,7 +12,7 @@ public class Elevator {
     DcMotorEx left;
     DcMotorEx right;
     int height = 0;
-    int stackNum = 5;
+    int stackNum = 0;
     double currentPosition;
     double leftPower;
     double rightPower;
@@ -53,6 +53,13 @@ public class Elevator {
             case GJUNC:
                 move(150);
                 break;
+
+            case STACK:
+                move(700 - 130*stackNum);
+                stackNum++;
+                if (stackNum == 5){
+                    stackNum = 0;
+                }
         }
 
     }

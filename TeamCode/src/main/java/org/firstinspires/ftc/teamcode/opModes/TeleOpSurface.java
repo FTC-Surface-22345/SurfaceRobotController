@@ -119,16 +119,23 @@ public class TeleOpSurface extends LinearOpMode {
                     elevator.moveLift(dashConstants.elevatorPos.GJUNC);
                 }
 
+                if (gamepad1.x){
+                    elevator.moveLift(dashConstants.elevatorPos.STACK);
+                    while (gamepad1.x){
+                        telemetry.addData("Gamepad1 X", "Pressed");
+                    }
+                }
+
                 //Elevator Manual Up
                 if (gamepad1.right_trigger > 0.3){
-//                    elevator.setLiftPosition(height + 80);
-//                    height++;
+                    elevator.setLiftPosition(height + 40);
+                    height++;
                 }
 
                 //Elevator Manual Down
                 if (gamepad1.left_trigger > 0.3){
-//                    elevator.setLiftPosition(height - 80);
-//                    height--;
+                    elevator.setLiftPosition(height - 40);
+                    height--;
                 }
 
 

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opModes;
 
+
 import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -15,7 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Kamera;
 import org.firstinspires.ftc.teamcode.subsystems.dashConstants;
 
 @Autonomous
-public class AutoOpBlueL extends LinearOpMode {
+public class parkAuto extends LinearOpMode{
     Drive drivetrain = new Drive();
 
     Claw claw = new Claw();
@@ -48,55 +49,26 @@ public class AutoOpBlueL extends LinearOpMode {
         }
         waitForStart();
 
-//        while (opModeIsActive() && !isStopRequested()) {
-        elevator.moveLift(dashConstants.elevatorPos.GJUNC);
         drivetrain.forward(1120);
         sleep(500);
         drivetrain.reset();
         sleep(500);
-        drivetrain.strafeRight(1800);
-        sleep(150);
-        drivetrain.reset();
-        sleep(150);
-        elevator.moveLift(dashConstants.elevatorPos.HIGH);
-        sleep(2000);
-        drivetrain.forward(100);
-        sleep(500);
-        drivetrain.reset();
-        sleep(200);
-        claw.open();
-        sleep(200);
-        drivetrain.backward(70);
-        sleep(500);
-        drivetrain.reset();
-        sleep(400);
-        elevator.moveLift(dashConstants.elevatorPos.GROUND);
-
         //park
         switch(position){
             case 1:
-                drivetrain.strafeLeft(3000);
+                drivetrain.strafeLeft(700);
                 telemetry.addData("Position", position);
                 break;
             case 2:
-                drivetrain.strafeLeft(1750);
-                telemetry.addData("Position", position);
+
                 break;
             case 3:
-                drivetrain.strafeLeft(500);
+                drivetrain.strafeRight(700);
                 telemetry.addData("Position", position);
                 break;
             case -1:
                 telemetry.addLine("Zone Failure");
                 break;
         }
-
-
-
-
-
     }
-
 }
-
-

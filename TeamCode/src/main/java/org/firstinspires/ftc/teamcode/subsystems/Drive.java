@@ -1,21 +1,17 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.utility.PID;
 
 public class Drive {
@@ -25,7 +21,10 @@ public class Drive {
     DcMotorEx BL;
     DcMotorEx BR;
 
-    double gain = .007;
+    double forwardGain = .0008;
+    double strafeGain = 0.018;
+
+    double speed = 0.6;
 
     double TPI = dashConstants.COUNTS_PER_INCH; //Ticks per Inch
 
@@ -98,47 +97,28 @@ public class Drive {
     }
 
     public void forward(double target) {
-//        FLPID.setTarget(target);
-//        FRPID.setTarget(target);
-//        BLPID.setTarget(target);
-//        BRPID.setTarget(target);
-
-        FL.setPower(.8);
-        BL.setPower(.8);
-        FR.setPower(.8);
-        BR.setPower(.8);
-
-        leftPower = .8;
-        rightPower = .8;
-
-        while (FR.getCurrentPosition() < 2000) {
+        while (FR.getCurrentPosition() < target) {
             updateIMU();
-//
-//            FL.setPower(leftPower);
-//            BL.setPower(leftPower);
-//            FR.setPower(rightPower);
-//            BR.setPower(rightPower);
-//
-//            telemetry.addData("FL: ", FL.getCurrentPosition());
-//            telemetry.addData("FR: ", FR.getCurrentPosition());
-//            telemetry.addData("BL: ", BL.getCurrentPosition());
-//            telemetry.addData("BR: ", BR.getCurrentPosition());
-//            telemetry.update();
 
-            FL.setPower(leftPower);
-            BL.setPower(leftPower);
-            FR.setPower(rightPower);
-            BR.setPower(rightPower);
+            FL.setPower(speed);
+            BL.setPower(speed);
+            FR.setPower(speed);
+            BR.setPower(speed);
 
-            if (Math.abs(IMUheading) > 1){
+            leftPower = speed;
+            rightPower = speed;
+
+            while (FR.getCurrentPosition() < target && Math.abs(IMUheading) > 0.1) {
                 updateIMU();
-                leftPower = leftPower - (0 - IMUheading) * gain;
-                rightPower = leftPower + (0 - IMUheading) * gain;
+                leftPower = leftPower + (0 - IMUheading) * -forwardGain;
+                rightPower = rightPower + (0 - IMUheading) * forwardGain;
                 FL.setPower(leftPower);
                 BL.setPower(leftPower);
                 FR.setPower(rightPower);
                 BR.setPower(rightPower);
-                updateIMU();
+
+                telemetry.addData("Left Power: ", leftPower);
+                telemetry.addData("Right Power: ", rightPower);
 
                 telemetry.addData("FL: ", FL.getCurrentPosition());
                 telemetry.addData("FR: ", FR.getCurrentPosition());
@@ -147,24 +127,66 @@ public class Drive {
                 telemetry.update();
             }
         }
-//        while (Math.abs(IMUheading) > 1){
-//            updateIMU();
-//            leftPower = (0 - IMUheading) * gain;
-//            rightPower = - (0 - IMUheading) * gain;
-//            FL.setPower(leftPower);
-//            BL.setPower(leftPower);
-//            FR.setPower(rightPower);
-//            BR.setPower(rightPower);
-//            updateIMU();
-//        }
-
-
-
 
         FL.setPower(0);
         BL.setPower(0);
         FR.setPower(0);
         BR.setPower(0);
+
+        leftPower = 0;
+        rightPower = 0;
+
+        telemetry.addData("FL: ", FL.getCurrentPosition());
+        telemetry.addData("FR: ", FR.getCurrentPosition());
+        telemetry.addData("BL: ", BL.getCurrentPosition());
+        telemetry.addData("BR: ", BR.getCurrentPosition());
+        telemetry.update();
+    }
+
+    public void backward(double target) {
+        while (FR.getCurrentPosition() < target) {
+            FL.setDirection(DcMotorSimple.Direction.FORWARD);
+            FR.setDirection(DcMotorSimple.Direction.REVERSE);
+            BL.setDirection(DcMotorSimple.Direction.FORWARD);
+            BR.setDirection(DcMotorSimple.Direction.REVERSE);
+
+            updateIMU();
+
+            FL.setPower(speed);
+            BL.setPower(speed);
+            FR.setPower(speed);
+            BR.setPower(speed);
+
+            leftPower = speed;
+            rightPower = speed;
+
+            while (FR.getCurrentPosition() < target && Math.abs(IMUheading) > 0.1) {
+                updateIMU();
+                leftPower = leftPower + (0 - IMUheading) * -forwardGain;
+                rightPower = rightPower + (0 - IMUheading) * forwardGain;
+                FL.setPower(leftPower);
+                BL.setPower(leftPower);
+                FR.setPower(rightPower);
+                BR.setPower(rightPower);
+
+                telemetry.addData("Left Power: ", leftPower);
+                telemetry.addData("Right Power: ", rightPower);
+
+                telemetry.addData("FL: ", FL.getCurrentPosition());
+                telemetry.addData("FR: ", FR.getCurrentPosition());
+                telemetry.addData("BL: ", BL.getCurrentPosition());
+                telemetry.addData("BR: ", BR.getCurrentPosition());
+                telemetry.update();
+            }
+        }
+
+        FL.setPower(0);
+        BL.setPower(0);
+        FR.setPower(0);
+        BR.setPower(0);
+
+        leftPower = 0;
+        rightPower = 0;
 
         telemetry.addData("FL: ", FL.getCurrentPosition());
         telemetry.addData("FR: ", FR.getCurrentPosition());
@@ -172,12 +194,10 @@ public class Drive {
         telemetry.addData("BR: ", BR.getCurrentPosition());
         telemetry.update();
 
-
-
-    }
-
-    public void backward(double target){
-
+        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+        FR.setDirection(DcMotorSimple.Direction.FORWARD);
+        BL.setDirection(DcMotorSimple.Direction.REVERSE);
+        BR.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public void turn(double target) {
@@ -186,44 +206,113 @@ public class Drive {
     }
 
     public void strafeLeft(double target) {
-        FLPID.setTarget(-target);
-        FRPID.setTarget(target);
-        BLPID.setTarget(target);
-        BRPID.setTarget(-target);
+        while (FR.getCurrentPosition() < target) {
+            FL.setDirection(DcMotorSimple.Direction.FORWARD);
+            BR.setDirection(DcMotorSimple.Direction.REVERSE);
+
+            updateIMU();
+
+            FL.setPower(speed);
+            BL.setPower(speed);
+            FR.setPower(speed);
+            BR.setPower(speed);
+
+            leftPower = speed;
+            rightPower = speed;
+
+            updateIMU();
+
+            leftPower = leftPower + (0 - IMUheading) * -strafeGain;
+            rightPower = rightPower + (0 - IMUheading) * strafeGain;
+
+            FL.setPower(leftPower);
+            BL.setPower(leftPower);
+            FR.setPower(rightPower);
+            BR.setPower(rightPower);
+
+            telemetry.addData("Left Power: ", leftPower);
+            telemetry.addData("Right Power: ", rightPower);
+
+            telemetry.addData("FL: ", FL.getCurrentPosition());
+            telemetry.addData("FR: ", FR.getCurrentPosition());
+            telemetry.addData("BL: ", BL.getCurrentPosition());
+            telemetry.addData("BR: ", BR.getCurrentPosition());
+            telemetry.update();
+
+        }
+
+        FL.setPower(0);
+        BL.setPower(0);
+        FR.setPower(0);
+        BR.setPower(0);
+
+        leftPower = 0;
+        rightPower = 0;
+
+        telemetry.addData("FL: ", FL.getCurrentPosition());
+        telemetry.addData("FR: ", FR.getCurrentPosition());
+        telemetry.addData("BL: ", BL.getCurrentPosition());
+        telemetry.addData("BR: ", BR.getCurrentPosition());
+        telemetry.update();
+
+        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+        BR.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
-    public void strafeRight(double target){
-        FLPID.setTarget(target);
-        FRPID.setTarget(-target);
-        BLPID.setTarget(-target);
-        BRPID.setTarget(target);
-    }
+    public void strafeRight(double target) {
+        while (FR.getCurrentPosition() < target) {
+            BL.setDirection(DcMotorSimple.Direction.FORWARD);
+            FR.setDirection(DcMotorSimple.Direction.REVERSE);
 
-    public void update() {
+            updateIMU();
 
-        FL.setPower(FLPID.update(FL.getCurrentPosition()));
+            FL.setPower(speed);
+            BL.setPower(speed);
+            FR.setPower(speed);
+            BR.setPower(speed);
 
-        FR.setPower(FLPID.update(FR.getCurrentPosition()));
+            leftPower = speed;
+            rightPower = speed;
 
-        BL.setPower(FLPID.update(BL.getCurrentPosition()));
 
-        BR.setPower(FLPID.update(BR.getCurrentPosition()));
-    }
+            updateIMU();
 
-    public double getFLPos() {
-        return FL.getCurrentPosition();
-    }
+            leftPower = leftPower + (0 - IMUheading) * -strafeGain;
+            rightPower = rightPower + (0 - IMUheading) * strafeGain;
 
-    public double getFRPos() {
-        return FR.getCurrentPosition();
-    }
+            FL.setPower(leftPower);
+            BL.setPower(leftPower);
+            FR.setPower(rightPower);
+            BR.setPower(rightPower);
 
-    public double getBLPos() {
-        return BL.getCurrentPosition();
-    }
+            telemetry.addData("Left Power: ", leftPower);
+            telemetry.addData("Right Power: ", rightPower);
 
-    public double getBRPos() {
-        return BR.getCurrentPosition();
+            telemetry.addData("FL: ", FL.getCurrentPosition());
+            telemetry.addData("FR: ", FR.getCurrentPosition());
+            telemetry.addData("BL: ", BL.getCurrentPosition());
+            telemetry.addData("BR: ", BR.getCurrentPosition());
+            telemetry.update();
+
+
+        }
+
+        FL.setPower(0);
+        BL.setPower(0);
+        FR.setPower(0);
+        BR.setPower(0);
+
+        leftPower = 0;
+        rightPower = 0;
+
+        telemetry.addData("FL: ", FL.getCurrentPosition());
+        telemetry.addData("FR: ", FR.getCurrentPosition());
+        telemetry.addData("BL: ", BL.getCurrentPosition());
+        telemetry.addData("BR: ", BR.getCurrentPosition());
+        telemetry.update();
+
+        BL.setDirection(DcMotorSimple.Direction.REVERSE);
+        FR.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public void reset() {
@@ -231,14 +320,27 @@ public class Drive {
         FR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         BL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         BR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        FL.setPower(0);
+        BL.setPower(0);
+        FR.setPower(0);
+        BR.setPower(0);
+
+        leftPower = 0;
+        rightPower = 0;
     }
 
-    public void resetIMU(){
+    public void resetIMU() {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         offsetAngle = angles.firstAngle;
     }
 
-    public void updateIMU(){
+    public void updateIMU() {
         IMUheading = angles.firstAngle - offsetAngle;
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         telemetry.addData("heading", angles.firstAngle);
@@ -248,7 +350,6 @@ public class Drive {
         telemetry.addData("offset", offsetAngle);
         telemetry.update();
     }
-
 
 
 }
