@@ -27,6 +27,8 @@ public class TeleOpSurface extends LinearOpMode {
 
     int height = 0;
 
+    double speedDiv = 1.6;
+
 
     @Override
     public void runOpMode() {
@@ -62,10 +64,18 @@ public class TeleOpSurface extends LinearOpMode {
                 telemetry.addData("Back Right: ", backRight.getCurrentPosition());
                 telemetry.update();
 
-                backLeft.setPower((gamepad1.left_stick_y + (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 1.6);
-                frontLeft.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x + gamepad1.right_stick_x)) / 1.6);
-                backRight.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 1.6);
-                frontRight.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x) / 1.6);
+                backLeft.setPower((gamepad1.left_stick_y + (gamepad1.left_stick_x - gamepad1.right_stick_x)) / speedDiv);
+                frontLeft.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x + gamepad1.right_stick_x)) / speedDiv);
+                backRight.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x - gamepad1.right_stick_x)) / speedDiv);
+                frontRight.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x) / speedDiv);
+
+                if (gamepad1.left_stick_button == true){
+                    speedDiv = 1;
+                }
+
+                if (gamepad1.left_stick_button == false){
+                    speedDiv = 1.6;
+                }
 
                 //Close Claw
                  if (gamepad1.right_bumper) {

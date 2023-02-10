@@ -28,7 +28,7 @@ public class parkAuto extends LinearOpMode{
     @SuppressLint("Default Locale")
     @Override
     public void runOpMode() {
-        telemetry = FtcDashboard.getInstance().getTelemetry();
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         telemetry.addLine("Waiting for Robot Initialization...");
         telemetry.update();
@@ -56,14 +56,14 @@ public class parkAuto extends LinearOpMode{
         //park
         switch(position){
             case 1:
-                drivetrain.strafeLeft(700);
+                drivetrain.strafeLeft(1300);
                 telemetry.addData("Position", position);
                 break;
             case 2:
 
                 break;
             case 3:
-                drivetrain.strafeRight(700);
+                drivetrain.strafeRight(1250);
                 telemetry.addData("Position", position);
                 break;
             case -1:

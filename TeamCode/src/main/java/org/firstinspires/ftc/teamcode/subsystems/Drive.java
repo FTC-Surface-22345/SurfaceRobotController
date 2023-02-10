@@ -21,10 +21,10 @@ public class Drive {
     DcMotorEx BL;
     DcMotorEx BR;
 
-    double forwardGain = .0008;
+    double forwardGain = .001;
     double strafeGain = 0.018;
 
-    double speed = 0.6;
+    double speed = 0.4;
 
     double TPI = dashConstants.COUNTS_PER_INCH; //Ticks per Inch
 
@@ -33,6 +33,7 @@ public class Drive {
     Orientation angles;
     float IMUheading;
     float offsetAngle;
+    float heading;
 
     //PIDs FOR MOVEMENT
     PID turnPID = new PID();
@@ -97,7 +98,7 @@ public class Drive {
     }
 
     public void forward(double target) {
-        while (FR.getCurrentPosition() < target) {
+        while (FR.getCurrentPosition() < target){
             updateIMU();
 
             FL.setPower(speed);
@@ -108,7 +109,7 @@ public class Drive {
             leftPower = speed;
             rightPower = speed;
 
-            while (FR.getCurrentPosition() < target && Math.abs(IMUheading) > 0.1) {
+            while (FR.getCurrentPosition() < target) {
                 updateIMU();
                 leftPower = leftPower + (0 - IMUheading) * -forwardGain;
                 rightPower = rightPower + (0 - IMUheading) * forwardGain;
@@ -141,6 +142,8 @@ public class Drive {
         telemetry.addData("BL: ", BL.getCurrentPosition());
         telemetry.addData("BR: ", BR.getCurrentPosition());
         telemetry.update();
+
+        reset();
     }
 
     public void backward(double target) {
@@ -160,10 +163,10 @@ public class Drive {
             leftPower = speed;
             rightPower = speed;
 
-            while (FR.getCurrentPosition() < target && Math.abs(IMUheading) > 0.1) {
+            while (FR.getCurrentPosition() < target) {
                 updateIMU();
-                leftPower = leftPower + (0 - IMUheading) * -forwardGain;
-                rightPower = rightPower + (0 - IMUheading) * forwardGain;
+                leftPower = leftPower + (0 - IMUheading) * forwardGain;
+                rightPower = rightPower + (0 - IMUheading) * -forwardGain;
                 FL.setPower(leftPower);
                 BL.setPower(leftPower);
                 FR.setPower(rightPower);
@@ -198,11 +201,65 @@ public class Drive {
         FR.setDirection(DcMotorSimple.Direction.FORWARD);
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        reset();
     }
 
-    public void turn(double target) {
+    public void turnLeft(double target) {
+        while (angles.firstAngle > offsetAngle - 90) {
+            updateIMU();
 
+            FL.setPower(-speed);
+            BL.setPower(-speed);
+            FR.setPower(speed);
+            BR.setPower(speed);
 
+            leftPower = -speed;
+            rightPower = speed;
+
+            telemetry.addData("heading", IMUheading);
+            telemetry.update();
+
+        }
+
+        FL.setPower(0);
+        BL.setPower(0);
+        FR.setPower(0);
+        BR.setPower(0);
+
+        leftPower = 0;
+        rightPower = 0;
+
+        reset();
+    }
+
+    public void turnRight(double target){
+        while (angles.firstAngle < offsetAngle + 90) {
+            updateIMU();
+
+            FL.setPower(speed);
+            BL.setPower(speed);
+            FR.setPower(-speed);
+            BR.setPower(-speed);
+
+            leftPower = speed;
+            rightPower = -speed;
+
+            telemetry.update();
+
+            telemetry.addData("heading", IMUheading);
+            telemetry.update();
+        }
+
+        FL.setPower(0);
+        BL.setPower(0);
+        FR.setPower(0);
+        BR.setPower(0);
+
+        leftPower = 0;
+        rightPower = 0;
+
+        reset();
     }
 
     public void strafeLeft(double target) {
@@ -257,6 +314,8 @@ public class Drive {
 
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        reset();
     }
 
     public void strafeRight(double target) {
@@ -313,6 +372,8 @@ public class Drive {
 
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
         FR.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        reset();
     }
 
     public void reset() {
@@ -338,6 +399,10 @@ public class Drive {
     public void resetIMU() {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         offsetAngle = angles.firstAngle;
+
+        telemetry.addData("heading", angles.firstAngle);
+        telemetry.addData("IMUheading", IMUheading);
+        telemetry.update();
     }
 
     public void updateIMU() {
@@ -349,6 +414,10 @@ public class Drive {
         telemetry.addData("IMUheading", IMUheading);
         telemetry.addData("offset", offsetAngle);
         telemetry.update();
+    }
+
+    public double IMUheading(){
+        return IMUheading;
     }
 
 
