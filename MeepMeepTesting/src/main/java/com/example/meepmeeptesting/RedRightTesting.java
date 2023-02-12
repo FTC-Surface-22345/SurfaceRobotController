@@ -57,19 +57,25 @@ public class RedRightTesting {
                                 .lineTo(new Vector2d(-36, 0))
                                 .lineToLinearHeading(new Pose2d(-32, 0, Math.toRadians(0)))
 
-                                //return to in line
-                                .lineToLinearHeading(new Pose2d(-36,0, Math.toRadians(90)))
+                                //move to stack
+                                .splineToLinearHeading(new Pose2d(-60, -12, Math.toRadians(180)), Math.toRadians(180))
 
-                                //move to in line with stack
-                                .lineTo(new Vector2d(-36, -12))
-                                .lineToLinearHeading(new Pose2d(-60, -12, Math.toRadians(180)))
+//                                //return to in line
+//                                .lineToLinearHeading(new Pose2d(-36,0, Math.toRadians(90)))
+//
+//                                //move to in line with stack
+//                                .lineTo(new Vector2d(-36, -12))
+//                                .lineToLinearHeading(new Pose2d(-60, -12, Math.toRadians(180)))
+
+                                //move back to HIGH_JUNC
+                                .splineToLinearHeading(new Pose2d(-32, 0, Math.toRadians(0)), Math.toRadians(0))
 
                                 //move back to in line
-                                .lineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(90)))
+                                //.lineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(90)))
 
-                                //move to high junction
-                                .lineTo(new Vector2d(-36,0))
-                                .lineToLinearHeading(new Pose2d(-32, 0, Math.toRadians(0)))
+//                                //move to high junction
+//                                .lineTo(new Vector2d(-36,0))
+//                                .lineToLinearHeading(new Pose2d(-32, 0, Math.toRadians(0)))
 
                                 //move back in line
                                 .lineToLinearHeading(new Pose2d(-36, 0, Math.toRadians(90)))
