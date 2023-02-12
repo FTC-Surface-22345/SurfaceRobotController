@@ -10,10 +10,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.checkerframework.checker.units.qual.K;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.Elevator;
 import org.firstinspires.ftc.teamcode.subsystems.Kamera;
-import org.firstinspires.ftc.teamcode.subsystems.dashConstants;
+import org.firstinspires.ftc.teamcode.subsystems.Constants;
 
 @Autonomous
 public class parkAuto extends LinearOpMode{
@@ -45,7 +46,7 @@ public class parkAuto extends LinearOpMode{
             telemetry.update();
             sleep(50);
             drivetrain.resetIMU();
-            claw.moveClaw(dashConstants.clawState.CLOSE);
+            claw.moveClaw(Constants.clawState.CLOSE);
         }
         waitForStart();
 

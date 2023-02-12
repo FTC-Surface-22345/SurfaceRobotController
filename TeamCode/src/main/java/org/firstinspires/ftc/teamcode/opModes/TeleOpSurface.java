@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Elevator;
-import org.firstinspires.ftc.teamcode.subsystems.dashConstants;
+import org.firstinspires.ftc.teamcode.subsystems.Constants;
 
 @TeleOp(name = "TeleOpSurface")
 public class TeleOpSurface extends LinearOpMode {
@@ -79,7 +79,7 @@ public class TeleOpSurface extends LinearOpMode {
 
                 //Close Claw
                  if (gamepad1.right_bumper) {
-                     claw.open();
+                     claw.moveClaw(Constants.clawState.OPEN);
 //                     telemetry.addData("Claw State: ", "Open");
 //                     telemetry.update();
                      sleep(350);
@@ -89,7 +89,7 @@ public class TeleOpSurface extends LinearOpMode {
 
                  //Open Claw
                  if(gamepad1.left_bumper) {
-                     claw.close();
+                     claw.moveClaw(Constants.clawState.CLOSE);
 //                     telemetry.addData("Claw State: ", "Closed");
 //                     telemetry.update();
                      sleep(350);
@@ -100,7 +100,7 @@ public class TeleOpSurface extends LinearOpMode {
                 if (gamepad1.dpad_up){
 //                    elevator.setLiftPosition(4180);
 //                    height = 4180;
-                    elevator.moveLift(dashConstants.elevatorPos.HIGH);
+                    elevator.moveLift(Constants.elevatorPos.HIGH);
 
                 }
 
@@ -108,29 +108,29 @@ public class TeleOpSurface extends LinearOpMode {
                 if (gamepad1.dpad_left){
 //                    elevator.setLiftPosition(2900); //2900
 //                    height = 3110;
-                    elevator.moveLift(dashConstants.elevatorPos.MIDDLE);
+                    elevator.moveLift(Constants.elevatorPos.MIDDLE);
                 }
 
                 //Elevator Low
                 if (gamepad1.dpad_right){
 //                    elevator.setLiftPosition(1780);
 //                    height = 1780;
-                    elevator.moveLift(dashConstants.elevatorPos.LOW);
+                    elevator.moveLift(Constants.elevatorPos.LOW);
                 }
 
                 //Elevator Down
                 if (gamepad1.dpad_down){
 //                    elevator.setLiftPosition(50);
 //                    height = 50;
-                    elevator.moveLift(dashConstants.elevatorPos.GROUND);
+                    elevator.moveLift(Constants.elevatorPos.GROUND);
                 }
 
                 if (gamepad1.y){
-                    elevator.moveLift(dashConstants.elevatorPos.GJUNC);
+                    elevator.moveLift(Constants.elevatorPos.GJUNC);
                 }
 
                 if (gamepad1.x){
-                    elevator.moveLift(dashConstants.elevatorPos.STACK);
+                    elevator.moveLift(Constants.elevatorPos.STACK);
                     while (gamepad1.x){
                         telemetry.addData("Gamepad1 X", "Pressed");
                     }

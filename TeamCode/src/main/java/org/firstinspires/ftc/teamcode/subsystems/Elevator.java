@@ -32,7 +32,7 @@ public class Elevator {
     }
 
     //DASHBOARD CONSTANTS INPUT
-    public void moveLift(dashConstants.elevatorPos input) {
+    public void moveLift(Constants.elevatorPos input) {
         switch (input) {
             case GROUND:
                 move(50);

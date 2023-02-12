@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.Elevator;
 import org.firstinspires.ftc.teamcode.subsystems.Kamera;
-import org.firstinspires.ftc.teamcode.subsystems.dashConstants;
+import org.firstinspires.ftc.teamcode.subsystems.Constants;
 
 @Autonomous
 public class AutoOpBlueL extends LinearOpMode {
@@ -44,12 +44,12 @@ public class AutoOpBlueL extends LinearOpMode {
             telemetry.update();
             sleep(50);
             drivetrain.resetIMU();
-            claw.moveClaw(dashConstants.clawState.CLOSE);
+            claw.moveClaw(Constants.clawState.CLOSE);
         }
         waitForStart();
 
 //        while (opModeIsActive() && !isStopRequested()) {
-        elevator.moveLift(dashConstants.elevatorPos.GJUNC);
+        elevator.moveLift(Constants.elevatorPos.GJUNC);
         drivetrain.forward(1120);
         sleep(500);
         drivetrain.reset();
@@ -58,7 +58,7 @@ public class AutoOpBlueL extends LinearOpMode {
         sleep(150);
         drivetrain.reset();
         sleep(150);
-        elevator.moveLift(dashConstants.elevatorPos.HIGH);
+        elevator.moveLift(Constants.elevatorPos.HIGH);
         sleep(2000);
         drivetrain.forward(100);
         sleep(500);
@@ -70,7 +70,7 @@ public class AutoOpBlueL extends LinearOpMode {
         sleep(500);
         drivetrain.reset();
         sleep(400);
-        elevator.moveLift(dashConstants.elevatorPos.GROUND);
+        elevator.moveLift(Constants.elevatorPos.GROUND);
 
         //park
         switch(position){

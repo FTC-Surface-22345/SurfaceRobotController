@@ -3,10 +3,10 @@
 
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.teamcode.subsystems.dashConstants.closeClawL;
-import static org.firstinspires.ftc.teamcode.subsystems.dashConstants.closeClawR;
-import static org.firstinspires.ftc.teamcode.subsystems.dashConstants.openClawL;
-import static org.firstinspires.ftc.teamcode.subsystems.dashConstants.openClawR;
+import static org.firstinspires.ftc.teamcode.subsystems.Constants.closeClawL;
+import static org.firstinspires.ftc.teamcode.subsystems.Constants.closeClawR;
+import static org.firstinspires.ftc.teamcode.subsystems.Constants.openClawL;
+import static org.firstinspires.ftc.teamcode.subsystems.Constants.openClawR;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -38,7 +38,7 @@ public class Claw{
     }
 
 
-    public void moveClaw(dashConstants.clawState input){
+    public void moveClaw(Constants.clawState input){
         switch (input){
             case OPEN:
                 open();
