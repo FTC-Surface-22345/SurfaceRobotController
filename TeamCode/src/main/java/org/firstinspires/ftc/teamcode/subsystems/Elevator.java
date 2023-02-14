@@ -55,7 +55,7 @@ public class Elevator {
                 break;
 
             case STACK:
-                move(700 - 130*stackNum);
+                move(700 - 140 * stackNum);
                 stackNum++;
                 if (stackNum == 5){
                     stackNum = 0;
@@ -94,6 +94,14 @@ public class Elevator {
 
     public void move(int target){
         setLiftPosition(target);
+    }
+
+    public boolean isBusy(){
+        double position = currentPosition;
+        if (position != currentPosition){
+            return true;
+        }
+        return false;
     }
 
     public double getPosition() {

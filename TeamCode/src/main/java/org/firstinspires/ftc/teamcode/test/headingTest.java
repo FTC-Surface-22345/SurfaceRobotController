@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
-import org.firstinspires.ftc.teamcode.subsystems.dashConstants;
+import org.firstinspires.ftc.teamcode.subsystems.Constants;
 
 @Autonomous
 public class headingTest extends LinearOpMode{

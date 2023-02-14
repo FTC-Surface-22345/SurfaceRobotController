@@ -17,6 +17,8 @@ public class Claw{
 
     Servo leftServo;
     Servo rightServo;
+
+    public boolean clawState;
 //    double openPositionLeft = 0.55; //While opMode Active --> 0.75
 //    double closePositionLeft = 0.80;
 //    double openPositionRight = 1.0; //While opMode Active --> 0.8
@@ -42,11 +44,22 @@ public class Claw{
         switch (input){
             case OPEN:
                 open();
+                clawState = false;
+                break;
 
             case CLOSE:
                 close();
+                clawState = true;
+                break;
 
         }
+    }
+
+    public boolean isBusy(){
+        if (leftServo.getPosition() <= 0.7 || leftServo.getPosition() >= 0.77) {
+            return true;
+        }
+        return false;
     }
 
 

@@ -26,7 +26,7 @@ public class Drive {
 
     double speed = 0.4;
 
-    double TPI = dashConstants.COUNTS_PER_INCH; //Ticks per Inch
+    double TPI = Constants.COUNTS_PER_INCH; //Ticks per Inch
 
     //IMU & IMU VARIABLES
     BNO055IMU imu;
@@ -84,13 +84,13 @@ public class Drive {
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-        turnPID.init(new ElapsedTime(), dashConstants.turnPID[0], dashConstants.turnPID[1], dashConstants.turnPID[2]);
+        turnPID.init(new ElapsedTime(), Constants.turnPID[0], Constants.turnPID[1], Constants.turnPID[2]);
 
         //INITIALIZATION OF PIDS FOR EACH MOTOR
-        FLPID.init(new ElapsedTime(), dashConstants.movePID[0], dashConstants.movePID[1], dashConstants.movePID[2]);
-        FRPID.init(new ElapsedTime(), dashConstants.movePID[0], dashConstants.movePID[1], dashConstants.movePID[2]);
-        BLPID.init(new ElapsedTime(), dashConstants.movePID[0], dashConstants.movePID[1], dashConstants.movePID[2]);
-        BRPID.init(new ElapsedTime(), dashConstants.movePID[0], dashConstants.movePID[1], dashConstants.movePID[2]);
+        FLPID.init(new ElapsedTime(), Constants.movePID[0], Constants.movePID[1], Constants.movePID[2]);
+        FRPID.init(new ElapsedTime(), Constants.movePID[0], Constants.movePID[1], Constants.movePID[2]);
+        BLPID.init(new ElapsedTime(), Constants.movePID[0], Constants.movePID[1], Constants.movePID[2]);
+        BRPID.init(new ElapsedTime(), Constants.movePID[0], Constants.movePID[1], Constants.movePID[2]);
 
         telemetry = tele;
 
