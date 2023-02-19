@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Elevator;
 import org.firstinspires.ftc.teamcode.subsystems.Kamera;
 
-@Autonomous(name = "Autonomous Right")
-public class Experimental extends LinearOpMode {
+@Autonomous(name = "Autonomous Left No WEBCAM")
+public class LeftCopy extends LinearOpMode {
 
     ElapsedTime runtime = new ElapsedTime();
     Constants.autoActions currentTrajectory = Constants.autoActions.IDLE;
@@ -28,7 +28,7 @@ public class Experimental extends LinearOpMode {
     Claw claw = new Claw();
     Kamera camera = new Kamera();
 
-    Pose2d startPos = new Pose2d(39.5, -59.6, Math.toRadians(90));
+    Pose2d startPos = new Pose2d(-39.5, -59.6, Math.toRadians(90));
 
     int stack = 0;
     int high = 0;
@@ -50,11 +50,11 @@ public class Experimental extends LinearOpMode {
 
         //TRAJECTORIES
         Trajectory READY = drivetrain.trajectoryBuilder(startPos)
-                .lineTo(new Vector2d(34, -50))
+                .lineTo(new Vector2d(-34, -50))
                 .build();
 
         Trajectory TO_HIGH_JUNC = drivetrain.trajectoryBuilder(READY.end())
-                .lineTo(new Vector2d(36, -12)) //40, 10
+                .lineTo(new Vector2d(-36, -12)) //40, 10
                 .addDisplacementMarker(
                         3,
                         () -> {
@@ -63,11 +63,11 @@ public class Experimental extends LinearOpMode {
                 .build();
 
         Trajectory STRAFE_TO_HIGH_JUNC = drivetrain.trajectoryBuilder(TO_HIGH_JUNC.end())
-                .strafeTo(new Vector2d(23.6, -12)) //32, 0
+                .strafeTo(new Vector2d(-23.6, -12)) //32, 0
                 .build();
 
         Trajectory SCORE = drivetrain.trajectoryBuilder(STRAFE_TO_HIGH_JUNC.end())
-                .lineTo(new Vector2d(23.6, -4))
+                .lineTo(new Vector2d(-23.6, -4.5))
                 .addTemporalMarker(
                         2,
                         () -> {
@@ -77,11 +77,11 @@ public class Experimental extends LinearOpMode {
                 .build();
 
         Trajectory BACK_TO_CONE_STACK_LINE = drivetrain.trajectoryBuilder(SCORE.end())
-                .lineTo(new Vector2d(23.6, -11))
+                .lineTo(new Vector2d(-23.6, -10.6))
                 .build();
 
         Trajectory MOVE_TO_CENTER_LINE = drivetrain.trajectoryBuilder(BACK_TO_CONE_STACK_LINE.end())
-                .strafeTo(new Vector2d(36, -11))
+                .strafeTo(new Vector2d(-36, -10.6))
                 .addDisplacementMarker(
                         1,
                         () -> {
@@ -91,7 +91,7 @@ public class Experimental extends LinearOpMode {
                 .build();
 
         Trajectory MOVE_TO_CONE_STACK = drivetrain.trajectoryBuilder(MOVE_TO_CENTER_LINE.end())
-                .lineToLinearHeading(new Pose2d(62, -11, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-62, -10.6, Math.toRadians(180)))
                 .addDisplacementMarker(
                         3,
                         () -> {
@@ -99,7 +99,7 @@ public class Experimental extends LinearOpMode {
                         }
                 )
                 .addSpatialMarker(
-                        new Vector2d(62, -10.6),
+                        new Vector2d(-62, -10.6),
                         () -> {
                             claw.moveClaw(Constants.clawState.CLOSE);
                         }
@@ -107,7 +107,7 @@ public class Experimental extends LinearOpMode {
                 .build();
 
         Trajectory BACK_TO_HIGH_JUNC = drivetrain.trajectoryBuilder(MOVE_TO_CONE_STACK.end())
-                .lineToLinearHeading(new Pose2d(23.6, -10.6, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-23.6, -10.6, Math.toRadians(90)))
                 .addDisplacementMarker(
                         3,
                         () -> {
@@ -119,7 +119,7 @@ public class Experimental extends LinearOpMode {
 
 
         Trajectory MOVE_TO_PARK_LINE = drivetrain.trajectoryBuilder((MOVE_TO_CENTER_LINE).end())
-                .lineTo(new Vector2d(36, -36))
+                .lineTo(new Vector2d(-36, -36))
                 .build();
 
         runtime.reset();
@@ -134,31 +134,31 @@ public class Experimental extends LinearOpMode {
         claw.moveClaw(Constants.clawState.CLOSE);
 
         while (opModeInInit()) {
-            zone = camera.getPosition();
-            telemetry.addData("Parking Zone: ", zone);
-            telemetry.update();
+//            zone = camera.getPosition();
+//            telemetry.addData("Parking Zone: ", zone);
+//            telemetry.update();
         }
 
         waitForStart();
 
-        camera.webcam.stopStreaming();
-        camera.webcam.stopRecordingPipeline();
+//        camera.webcam.stopStreaming();
+//        camera.webcam.stopRecordingPipeline();
 
         elevator.moveLift(Constants.elevatorPos.GROUND);
 
-        if (zone == 1) {
-            parkZone = new Pose2d(12, -11.3, Math.toRadians(90));
-        } else if (zone == 2) {
-            parkZone = new Pose2d(36, -11.3, Math.toRadians(90));
-        } else if (zone == 3) {
-            parkZone = new Pose2d(60, -11.3, Math.toRadians(90));
-        } else if (zone == -1) {
-            parkZone = new Pose2d(12, -11.3, Math.toRadians(90));
-        }
+//        if (zone == 1) {
+//            parkZone = new Pose2d(-60, -11.3, Math.toRadians(90));
+//        } else if (zone == 2) {
+//            parkZone = new Pose2d(-36, -11.3, Math.toRadians(90));
+//        } else if (zone == 3) {
+//            parkZone = new Pose2d(-12, -11.3, Math.toRadians(90));
+//        } else if (zone == -1) {
+//            parkZone = new Pose2d(-12, -11.3, Math.toRadians(90));
+//        }
 
-        Trajectory PARK = drivetrain.trajectoryBuilder(BACK_TO_CONE_STACK_LINE.end())
-                .lineToLinearHeading(parkZone)
-                .build();
+//        Trajectory PARK = drivetrain.trajectoryBuilder(BACK_TO_CONE_STACK_LINE.end())
+//                .lineToLinearHeading(parkZone)
+//                .build();
         //Trajectory PARK = drivetrain.trajectoryBuilder()
 
         telemetry.addLine("AUTONOMOUS READY...");
@@ -235,7 +235,7 @@ public class Experimental extends LinearOpMode {
                     }
                 case PARK:
                     if (!drivetrain.isBusy()) {
-                        drivetrain.followTrajectory(PARK);
+//                        drivetrain.followTrajectory(PARK);
                         elevator.moveLift(Constants.elevatorPos.GROUND);
                         claw.moveClaw(Constants.clawState.OPEN);
                         nextTrajectory(Constants.autoActions.IDLE);
