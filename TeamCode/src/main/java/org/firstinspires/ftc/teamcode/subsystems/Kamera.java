@@ -1,42 +1,28 @@
-package org.firstinspires.ftc.teamcode.test;
-
-import android.annotation.SuppressLint;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import org.openftc.apriltag.AprilTagDetection;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.utility.OpenCV;
+import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.*;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "CameraTest")
-public class CameraTest extends LinearOpMode {
+public class Kamera extends LinearOpMode{
+    public OpenCvWebcam webcam;
+    static OpenCV.Pipeline pipeline;
 
-    OpenCvCamera webcam;
-    OpenCV.Pipeline pipeline;
-
-    // Lens intrinsics
-    // UNITS ARE PIXELS
-    // NOTE: this calibration is for the C920 webcam at 800x448.
-    // You will need to do your own calibration for other configurations!
     double fx = 578.272;
     double fy = 578.272;
     double cx = 402.145;
     double cy = 221.506;
-
-    // UNITS ARE METERS
     double tagsize = 0.166;
 
-    @Override
-    public void runOpMode() {
+    public void init(HardwareMap hardwareMap) {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -76,31 +62,19 @@ public class CameraTest extends LinearOpMode {
 
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
-        waitForStart();
-        while (opModeIsActive()) {
-
-            ArrayList<AprilTagDetection> currentDetections = pipeline.getLatestDetections();
-
-            if(currentDetections.size() != 0)
-            {
-                for(AprilTagDetection tag : currentDetections)
-                {
-                    telemetry.addData("Tag ID ", tag.id);
-                }
-
-            }
-            else
-            {
-                telemetry.addData("Tag ID ", -1);
-            }
-
-            telemetry.update();
-
-            if (gamepad1.a) {
-                webcam.stopStreaming();
-            }
-
-            sleep(100);
-        }
     }
+
+    public int getPosition() {
+        ArrayList<AprilTagDetection> currentDetections = pipeline.getLatestDetections();
+
+        if (currentDetections.size() != 0) {
+            for(AprilTagDetection tag : currentDetections) {
+                return tag.id;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public void runOpMode() throws InterruptedException {}
 }

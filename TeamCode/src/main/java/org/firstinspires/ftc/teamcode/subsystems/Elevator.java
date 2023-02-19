@@ -5,67 +5,106 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Elevator{
-    DcMotorEx leftElevator;
-    DcMotorEx rightElevator;
-    double setPosition;
-    public int minHeight = 0;
-    public int maxHeight = 4460;
-    double targetPosition;
+//MINIMUM HEIGHT = 0, MAXIMUM HEIGHT = 4460;
+public class Elevator {
+    DcMotorEx left;
+    DcMotorEx right;
+    int height = 0;
+    int stackNum = 0;
     double currentPosition;
-    double error;
-    double gain = 0.01;
-    double newMotorPower;
     double leftPower;
     double rightPower;
 
-    public void init(HardwareMap hardwareMap) { //Complete
-        leftElevator = hardwareMap.get(DcMotorEx.class, "LeftElevator");
-        leftElevator.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightElevator = hardwareMap.get(DcMotorEx.class, "RightElevator");
-        rightElevator.setDirection(DcMotorSimple.Direction.REVERSE);
+    //INIT WITH testDrive HARDWARE MAP - @NOTE RENAME testDrive TO SurfaceHardwareMap
+    public void init(HardwareMap hardwareMap) {
+        left = hardwareMap.get(DcMotorEx.class, "leftElevator");
+        left.setDirection(DcMotor.Direction.REVERSE);
+        right = hardwareMap.get(DcMotorEx.class, "rightElevator");
+        right.setDirection(DcMotor.Direction.REVERSE);
 
-        leftElevator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        rightElevator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        
-        leftElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        right.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
+    //DASHBOARD CONSTANTS INPUT
+    public void moveLift(Constants.elevatorPos input) {
+        switch (input) {
+            case GROUND:
+                move(50);
+                break;
 
-    public void setLiftPosition (int targetPos){
+            case LOW:
+                move(1780);
+                break;
+
+            case MIDDLE:
+                move(2900);
+                break;
+
+            case HIGH:
+                move(4180);
+                break;
+
+            case GJUNC:
+                move(150);
+                break;
+
+            case STACK:
+                move(700 - 140 * stackNum);
+                stackNum++;
+                if (stackNum == 5){
+                    stackNum = 0;
+                }
+        }
+
+    }
+
+    //Constant change SetLiftPosition to tweak Values for Placing Cones on Junctions
+    public void setLiftPosition(int target) {
 
         double currentPos = getPosition();
 
-        if (currentPos < targetPos) {
-            // Going up
+        if (currentPos < target) {
+            //UP
             leftPower = -1;
             rightPower = 1;
-        } else if (currentPos > targetPos) {
-            // Going down
-            leftPower = 0.3;
-            rightPower = -0.3;
+        } else if (currentPos > target) {
+            //DOWN
+            leftPower = 1;
+            rightPower = -1;
         }
 
-        leftElevator.setTargetPosition((int) targetPos);
-        rightElevator.setTargetPosition((int) -targetPos);
+        left.setTargetPosition(target);
+        right.setTargetPosition(-target);
 
-        leftElevator.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        rightElevator.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        left.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        right.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        leftElevator.setPower(leftPower);
-        rightElevator.setPower(rightPower);
-        
+        left.setPower(leftPower);
+        right.setPower(rightPower);
+
+        height = target;
+        currentPosition = right.getCurrentPosition();
     }
 
-    public double getPosition(){
-        return rightElevator.getCurrentPosition();
+    public void move(int target){
+        setLiftPosition(target);
     }
 
+    public boolean isBusy(){
+        double position = currentPosition;
+        if (position != currentPosition){
+            return true;
+        }
+        return false;
+    }
 
-
-
+    public double getPosition() {
+        return ((right.getCurrentPosition() - left.getCurrentPosition())/2);
+    }
 }

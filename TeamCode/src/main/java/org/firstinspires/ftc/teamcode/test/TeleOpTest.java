@@ -1,7 +1,7 @@
 //Property of FTC Team 22345 - All External users must request permission to access and utilize code
 //Authors: Krish K. & Ronald Q.
 
-package org.firstinspires.ftc.teamcode.opModes;
+package org.firstinspires.ftc.teamcode.test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -12,14 +12,50 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Elevator;
 import org.firstinspires.ftc.teamcode.subsystems.Constants;
+import android.annotation.SuppressLint;
 
-@TeleOp(name = "TeleOpSurface")
-public class TeleOpSurface extends LinearOpMode {
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.BHI260IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.FtcDashboard;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.subsystems.Drive;
+import org.firstinspires.ftc.teamcode.utility.PID;
+
+import org.firstinspires.ftc.teamcode.subsystems.Constants;
+
+@TeleOp(name = "TeleOpTest")
+public class TeleOpTest extends LinearOpMode {
+    
     DcMotorEx frontLeft;
     DcMotorEx backLeft;
     DcMotorEx backRight;
     DcMotorEx frontRight;
+    
+    BNO055IMU imu;
+    
+    Orientation angles;
+    float IMUheading;
+    float offsetAngle;
 
     Claw claw = new Claw();
 
@@ -27,9 +63,7 @@ public class TeleOpSurface extends LinearOpMode {
 
     int height = 0;
 
-    double speedDiv = 1.6;
-
-
+    @SuppressLint("Default Locale")
     @Override
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -51,10 +85,40 @@ public class TeleOpSurface extends LinearOpMode {
         //Elevator Initialization
         elevator.init(hardwareMap);
         int elevatorLevel = 0;
+        
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        
+        telemetry.addLine("Waiting for Robot Initialization...");
+        telemetry.update();
+        
+        while (opModeInInit()){
+             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+             offsetAngle = angles.firstAngle;
+             telemetry.addData("heading", angles.firstAngle);
+             telemetry.addData("roll", angles.secondAngle);
+             telemetry.addData("pitch", angles.thirdAngle);
+             telemetry.update();
+        }
 
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+                //IMU Heading Added
+                IMUheading = angles.firstAngle - offsetAngle;
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                telemetry.addData("heading", angles.firstAngle);
+                telemetry.addData("roll", angles.secondAngle);
+                telemetry.addData("pitch", angles.thirdAngle);
+                telemetry.addData("IMUheading", IMUheading);
+                telemetry.addData("offset", offsetAngle);
+                telemetry.update();
+                
                 telemetry.addData("Robot Status", "Initialized");
                 telemetry.addData("Elevator Position: ", elevator.getPosition());
                 telemetry.addData("Claw State: ", clawState);
@@ -64,22 +128,14 @@ public class TeleOpSurface extends LinearOpMode {
                 telemetry.addData("Back Right: ", backRight.getCurrentPosition());
                 telemetry.update();
 
-                backLeft.setPower((gamepad1.left_stick_y + (gamepad1.left_stick_x - gamepad1.right_stick_x)) / speedDiv);
-                frontLeft.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x + gamepad1.right_stick_x)) / speedDiv);
-                backRight.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x - gamepad1.right_stick_x)) / speedDiv);
-                frontRight.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x) / speedDiv);
-
-                if (gamepad1.left_stick_button == true){
-                    speedDiv = 1;
-                }
-
-                if (gamepad1.left_stick_button == false){
-                    speedDiv = 1.6;
-                }
+                backLeft.setPower((gamepad1.left_stick_y + (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 1.6);
+                frontLeft.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x + gamepad1.right_stick_x)) / 1.6);
+                backRight.setPower((gamepad1.left_stick_y - (gamepad1.left_stick_x - gamepad1.right_stick_x)) / 1.6);
+                frontRight.setPower((gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x) / 1.6);
 
                 //Close Claw
                  if (gamepad1.right_bumper) {
-                     claw.moveClaw(Constants.clawState.OPEN);
+                     claw.open();
 //                     telemetry.addData("Claw State: ", "Open");
 //                     telemetry.update();
                      sleep(350);
@@ -89,7 +145,7 @@ public class TeleOpSurface extends LinearOpMode {
 
                  //Open Claw
                  if(gamepad1.left_bumper) {
-                     claw.moveClaw(Constants.clawState.CLOSE);
+                     claw.close();
 //                     telemetry.addData("Claw State: ", "Closed");
 //                     telemetry.update();
                      sleep(350);
@@ -129,30 +185,22 @@ public class TeleOpSurface extends LinearOpMode {
                     elevator.moveLift(Constants.elevatorPos.GJUNC);
                 }
 
-                if (gamepad1.x){
-                    elevator.moveLift(Constants.elevatorPos.STACK);
-                    while (gamepad1.x){
-                        telemetry.addData("Gamepad1 X", "Pressed");
-                    }
-                }
-
                 //Elevator Manual Up
                 if (gamepad1.right_trigger > 0.3){
-                    elevator.setLiftPosition(height + 40);
-                    height++;
+//                    elevator.setLiftPosition(height + 80);
+//                    height++;
                 }
 
                 //Elevator Manual Down
                 if (gamepad1.left_trigger > 0.3){
-                    elevator.setLiftPosition(height - 40);
-                    height--;
+//                    elevator.setLiftPosition(height - 80);
+//                    height--;
                 }
-
-                if (gamepad1.a && gamepad1.share) {
-
+                
+                //Self-Correct IMU
+                if (IMUheading > 0){
+                    
                 }
-
-
 
             }
         }

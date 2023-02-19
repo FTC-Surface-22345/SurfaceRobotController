@@ -1,225 +1,159 @@
 package org.firstinspires.ftc.teamcode.utility;
 
-import org.checkerframework.checker.units.qual.C;
-import org.opencv.core.Core;
+import com.acmerobotics.dashboard.config.Config;
+
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
+import java.util.ArrayList;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.apriltag.AprilTagDetectorJNI;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-/*
- * This sample demonstrates a basic (but battle-tested and essentially
- * 100% accurate) method of detecting the skystone when lined up with
- * the sample regions over the first 3 stones.
- */
+@Config
+public class OpenCV {
+    public static class Pipeline extends OpenCvPipeline {
 
-public class OpenCV
-{
-    public static class Pipeline extends OpenCvPipeline
-    {
-        /*
-         * An enum to define the skystone position
-         */
-        public enum Orientation
-        {
-            RED,
-            GREEN,
-            BLUE,
-            PROCESSING
+        private long nativeApriltagPtr;
+        private Mat grey = new Mat();
+        private ArrayList<AprilTagDetection> detections = new ArrayList<>();
+
+        private ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
+        private final Object detectionsUpdateSync = new Object();
+
+        Mat cameraMatrix;
+
+        public static final Point REGION_A = new Point(0, 30);
+        public static final Point REGION_B = new Point(360, 690);
+
+        double fx;
+        double fy;
+        double cx;
+        double cy;
+
+        // UNITS ARE METERS
+        double tagsize;
+        double tagsizeX;
+        double tagsizeY;
+
+        private float decimation;
+        private boolean needToSetDecimation;
+        private final Object decimationSync = new Object();
+
+        Mat region1;
+
+        @Override
+        public void init(Mat firstFrame) {
+            region1 = firstFrame.submat(new Rect(REGION_A, REGION_B));
         }
 
-        /*
-         * Some color constants
-         */
-        static final Scalar BLUE = new Scalar(0, 0, 255);
-        static final Scalar GREEN = new Scalar(0, 255, 0);
-
-        /*
-         * The core values which define the location and size of the sample regions
-         */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(500, 780);
-        static final int REGION_WIDTH = 220;
-        static final int REGION_HEIGHT = 300;
-
-        /*
-         * Points which actually define the sample region rectangles, derived from above values
-         *
-         * Example of how points A and B work to define a rectangle
-         *
-         *   ------------------------------------
-         *   | (0,0) Point A                    |
-         *   |                                  |
-         *   |                                  |
-         *   |                                  |
-         *   |                                  |
-         *   |                                  |
-         *   |                                  |
-         *   |                  Point B (70,50) |
-         *   ------------------------------------
-         *
-         */
-        Point region1_pointA = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x,
-                REGION1_TOPLEFT_ANCHOR_POINT.y);
-        Point region1_pointB = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-
-        /*
-         * Working variables
-         */
-        Mat region1_Cb, region2_Cb, region3_Cb;
-        Mat YCrCb = new Mat();
-        Mat Cb = new Mat();
-        int avg1, avg2, avg3;
-
-        // Volatile since accessed by OpMode thread w/o synchronization
-        private volatile Orientation position = Orientation.PROCESSING;
-
-        /*
-         * This function takes the RGB frame, converts to YCrCb,
-         * and extracts the Cb channel to the 'Cb' variable
-         */
-        void inputToCb(Mat input)
+        public Pipeline(double tagsize, double fx, double fy, double cx, double cy)
         {
-            Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-            Core.extractChannel(YCrCb, Cb, 2);
+            this.tagsize = tagsize;
+            this.tagsizeX = tagsize;
+            this.tagsizeY = tagsize;
+            this.fx = fx;
+            this.fy = fy;
+            this.cx = cx;
+            this.cy = cy;
+
+            constructMatrix();
+
+            // Allocate a native context object. See the corresponding deletion in the finalizer
+            nativeApriltagPtr = AprilTagDetectorJNI.createApriltagDetector(AprilTagDetectorJNI.TagFamily.TAG_36h11.string, 3, 3);
         }
 
         @Override
-        public void init(Mat firstFrame)
+        public void finalize()
         {
-            /*
-             * We need to call this in order to make sure the 'Cb'
-             * object is initialized, so that the submats we make
-             * will still be linked to it on subsequent frames. (If
-             * the object were to only be initialized in processFrame,
-             * then the submats would become delinked because the backing
-             * buffer would be re-allocated the first time a real frame
-             * was crunched)
-             */
-            inputToCb(firstFrame);
-
-            /*
-             * Submats are a persistent reference to a region of the parent
-             * buffer. Any changes to the child affect the parent, and the
-             * reverse also holds true.
-             */
-            region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
-        }
-
-        @Override
-        public Mat processFrame(Mat input)
-        {
-            /*
-             * Overview of what we're doing:
-             *
-             * We first convert to YCrCb color space, from RGB color space.
-             * Why do we do this? Well, in the RGB color space, chroma and
-             * luma are intertwined. In YCrCb, chroma and luma are separated.
-             * YCrCb is a 3-channel color space, just like RGB. YCrCb's 3 channels
-             * are Y, the luma channel (which essentially just a B&W image), the
-             * Cr channel, which records the difference from red, and the Cb channel,
-             * which records the difference from blue. Because chroma and luma are
-             * not related in YCrCb, vision code written to look for certain values
-             * in the Cr/Cb channels will not be severely affected by differing
-             * light intensity, since that difference would most likely just be
-             * reflected in the Y channel.
-             *
-             * After we've converted to YCrCb, we extract just the 2nd channel, the
-             * Cb channel. We do this because stones are bright yellow and contrast
-             * STRONGLY on the Cb channel against everything else, including SkyStones
-             * (because SkyStones have a black label).
-             *
-             * We then take the average pixel value of 3 different regions on that Cb
-             * channel, one positioned over each stone. The brightest of the 3 regions
-             * is where we assume the SkyStone to be, since the normal stones show up
-             * extremely darkly.
-             *
-             * We also draw rectangles on the screen showing where the sample regions
-             * are, as well as drawing a solid rectangle over top the sample region
-             * we believe is on top of the SkyStone.
-             *
-             * In order for this whole process to work correctly, each sample region
-             * should be positioned in the center of each of the first 3 stones, and
-             * be small enough such that only the stone is sampled, and not any of the
-             * surroundings.
-             */
-
-            /*
-             * Get the Cb channel of the input frame after conversion to YCrCb
-             */
-            inputToCb(input);
-
-            /*
-             * Compute the average pixel value of each submat region. We're
-             * taking the average of a single channel buffer, so the value
-             * we need is at index 0. We could have also taken the average
-             * pixel value of the 3-channel image, and referenced the value
-             * at index 2 here.
-             */
-            avg1 = (int) Core.mean(region1_Cb).val[0];
-
-            /*
-             * Draw a rectangle showing sample region 1 on the screen.
-             * Simply a visual aid. Serves no functional purpose.
-             */
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region1_pointA, // First point which defines the rectangle
-                    region1_pointB, // Second point which defines the rectangle
-                    BLUE, // The color the rectangle is drawn in
-                    2); // Thickness of the rectangle lines
-
-
-            /*
-             * Find the max of the 3 averages
-             */
-
-            /*
-             * Now that we found the max, we actually need to go and
-             * figure out which sample region that value was from
-             */
-            if(avg1 != 0) // Was it from region 1?
+            // Might be null if createApriltagDetector() threw an exception
+            if(nativeApriltagPtr != 0)
             {
-                position = Orientation.RED; // Record our analysis
+                // Delete the native context we created in the constructor
+                AprilTagDetectorJNI.releaseApriltagDetector(nativeApriltagPtr);
+                nativeApriltagPtr = 0;
+            }
+            else
+            {
+                System.out.println("AprilTagDetectionPipeline.finalize(): nativeApriltagPtr was NULL");
+            }
+        }
 
-                /*
-                 * Draw a solid rectangle on top of the chosen region.
-                 * Simply a visual aid. Serves no functional purpose.
-                 */
-                Imgproc.rectangle(
-                        input, // Buffer to draw on
-                        region1_pointA, // First point which defines the rectangle
-                        region1_pointB, // Second point which defines the rectangle
-                        GREEN, // The color the rectangle is drawn in
-                        -1); // Negative thickness means solid fill
+        @Override
+        public Mat processFrame(Mat input) {
+
+            // Convert to greyscale
+            Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);
+
+            synchronized (decimationSync)
+            {
+                if(needToSetDecimation)
+                {
+                    AprilTagDetectorJNI.setApriltagDetectorDecimation(nativeApriltagPtr, decimation);
+                    needToSetDecimation = false;
+                }
             }
 
-            /*
-             * Render the 'input' buffer to the viewport. But note this is not
-             * simply rendering the raw camera feed, because we called functions
-             * to add some annotations to this buffer earlier up.
-             */
+            // Run AprilTag
+            detections = AprilTagDetectorJNI.runAprilTagDetectorSimple(nativeApriltagPtr, grey, tagsize, fx, fy, cx, cy);
+
+            synchronized (detectionsUpdateSync)
+            {
+                detectionsUpdate = detections;
+            }
+
             return input;
         }
 
-        /*
-         * Call this from the OpMode thread to obtain the latest analysis
-         */
-        public Orientation getAnalysis()
+        public void setDecimation(float decimation)
         {
-            return position;
+            synchronized (decimationSync)
+            {
+                this.decimation = decimation;
+                needToSetDecimation = true;
+            }
         }
 
-        public int getColorAverage(){
-            return avg1;
+        public ArrayList<AprilTagDetection> getLatestDetections()
+        {
+            return detections;
+        }
+
+        public ArrayList<AprilTagDetection> getDetectionsUpdate()
+        {
+            synchronized (detectionsUpdateSync)
+            {
+                ArrayList<AprilTagDetection> ret = detectionsUpdate;
+                detectionsUpdate = null;
+                return ret;
+            }
+        }
+
+        void constructMatrix() {
+            //     Construct the camera matrix.
+            //
+            //      --         --
+            //     | fx   0   cx |
+            //     | 0    fy  cy |
+            //     | 0    0   1  |
+            //      --         --
+            //
+
+            cameraMatrix = new Mat(3,3, CvType.CV_32FC1);
+
+            cameraMatrix.put(0,0, fx);
+            cameraMatrix.put(0,1,0);
+            cameraMatrix.put(0,2, cx);
+
+            cameraMatrix.put(1,0,0);
+            cameraMatrix.put(1,1,fy);
+            cameraMatrix.put(1,2,cy);
+
+            cameraMatrix.put(2, 0, 0);
+            cameraMatrix.put(2,1,0);
+            cameraMatrix.put(2,2,1);
         }
     }
 }
